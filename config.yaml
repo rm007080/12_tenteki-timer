@@ -1,0 +1,19 @@
+# 標準ワークスペース用の設定テンプレート
+
+project:
+  name: "点滴タイマー"
+  summary: "自然滴下の残量と終了予定時刻から滴下速度の目安を計算する個人利用向けPWA。"
+  primary_runtime: "HTML / CSS / JavaScript の静的PWA"
+
+paths:
+  specs_dir: "specs"
+  docs_dir: "doc"
+  todo_dir: "todo"
+  data_inputs_dir: "data/inputs"
+  app_dir: "app"
+  outbox_dir: "app/outbox"
+  logs_dir: "logs"
+
+notes:
+  main_inputs: "残量、終了予定時刻、滴下係数"
+  main_outputs: "mL/h、滴/分、秒/滴、GitHub Pages向け静的アプリ"

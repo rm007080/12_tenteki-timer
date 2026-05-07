@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+
+data/inputs/*
+!data/inputs/.gitkeep
+
+app/outbox/*
+!app/outbox/.gitkeep
+
+app/tmp/*
+!app/tmp/.gitkeep
+
+logs/*
+!logs/.gitkeep
