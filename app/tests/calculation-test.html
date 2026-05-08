@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>点滴タイマー 計算ロジックテスト</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+
+    body {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 24px 16px;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      margin: 0 0 8px;
+    }
+
+    .summary {
+      border: 1px solid currentColor;
+      border-radius: 6px;
+      font-weight: 700;
+      margin: 16px 0;
+      padding: 12px;
+    }
+
+    .summary.pass {
+      color: #047857;
+    }
+
+    .summary.fail {
+      color: #b91c1c;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid #9ca3af;
+      padding: 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      font-size: 0.875rem;
+    }
+
+    .pass {
+      color: #047857;
+    }
+
+    .fail {
+      color: #b91c1c;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+  </style>
+</head>
+<body>
+  <h1>点滴タイマー 計算ロジックテスト</h1>
+  <p>固定した <code>now</code> を渡して、実行時刻に依存しない確認を行う。</p>
+  <div id="summary" class="summary">テスト実行中...</div>
+  <table>
+    <thead>
+      <tr>
+        <th>結果</th>
+        <th>テスト</th>
+        <th>詳細</th>
+      </tr>
+    </thead>
+    <tbody id="results"></tbody>
+  </table>
+
+  <script src="../src/calc.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      var tests = [];
+
+      function fixedNow(hour, minute) {
+        return new Date(2026, 4, 8, hour, minute, 45, 999);
+      }
+
+      function calculate(input) {
+        return window.TentekiCalc.calculate(input);
+      }
+
+      function addTest(name, run) {
+        tests.push({ name: name, run: run });
+      }
+
+      function assertEqual(actual, expected, label) {
+        if (actual !== expected) {
+          throw new Error(label + ': expected ' + JSON.stringify(expected) + ', got ' + JSON.stringify(actual));
+        }
+      }
+
+      function assertOk(result) {
+        if (!result.ok) {
+          throw new Error('ok: expected true, got ' + JSON.stringify(result.errors));
+        }
+      }
+
+      function assertError(result, key, expectedMessage) {
+        if (result.ok) {
+          throw new Error('ok: expected false, got true');
+        }
+        assertEqual(result.errors[key], expectedMessage, 'errors.' + key);
+      }
+
+      addTest('123mL -> 120mL', function () {
+        var result = calculate({ volumeInput: '123', endTimeValue: '10:00', dropFactor: 20, now: fixedNow(8, 0) });
+        assertOk(result);
+        assertEqual(result.result.roundedVolumeMl, 120, 'roundedVolumeMl');
+      });
+
+      addTest('125mL -> 130mL', function () {
+        var result = calculate({ volumeInput: '125', endTimeValue: '10:00', dropFactor: 20, now: fixedNow(8, 0) });
+        assertOk(result);
+        assertEqual(result.result.roundedVolumeMl, 130, 'roundedVolumeMl');
+      });
+
+      addTest('2504mL -> 2500mL', function () {
+        var result = calculate({ volumeInput: '2504', endTimeValue: '10:00', dropFactor: 20, now: fixedNow(8, 0) });
+        assertOk(result);
+        assertEqual(result.result.roundedVolumeMl, 2500, 'roundedVolumeMl');
+      });
+
+      addTest('2505mL -> 2510mLでエラー', function () {
+        var result = calculate({ volumeInput: '2505', endTimeValue: '10:00', dropFactor: 20, now: fixedNow(8, 0) });
+        assertError(result, 'volume', '残量は2500mL以下で入力してください');
+      });
+
+      addTest('残量空欄のエラー', function () {
+        var result = calculate({ volumeInput: '', endTimeValue: '10:00', dropFactor: 20, now: fixedNow(8, 0) });
+        assertError(result, 'volume', '残量を入力してください');
+      });
+
+      addTest('残量0mL以下のエラー', function () {
+        var result = calculate({ volumeInput: '0', endTimeValue: '10:00', dropFactor: 20, now: fixedNow(8, 0) });
+        assertError(result, 'volume', '残量は10mL以上で入力してください');
+      });
+
+      addTest('残量2500mL超のエラー', function () {
+        var result = calculate({ volumeInput: '2505', endTimeValue: '10:00', dropFactor: 20, now: fixedNow(8, 0) });
+        assertError(result, 'volume', '残量は2500mL以下で入力してください');
+      });
+
+      addTest('08:14 -> 08:10', function () {
+        var result = calculate({ volumeInput: '100', endTimeValue: '08:14', dropFactor: 20, now: fixedNow(8, 0) });
+        assertOk(result);
+        assertEqual(result.result.roundedEndTimeText, '08:10', 'roundedEndTimeText');
+        assertEqual(result.result.remainingMinutes, 10, 'remainingMinutes');
+      });
+
+      addTest('08:15 -> 08:20', function () {
+        var result = calculate({ volumeInput: '100', endTimeValue: '08:15', dropFactor: 20, now: fixedNow(8, 0) });
+        assertOk(result);
+        assertEqual(result.result.roundedEndTimeText, '08:20', 'roundedEndTimeText');
+        assertEqual(result.result.remainingMinutes, 20, 'remainingMinutes');
+      });
+
+      addTest('23:55 -> 00:00', function () {
+        var result = calculate({ volumeInput: '100', endTimeValue: '23:55', dropFactor: 20, now: fixedNow(23, 40) });
+        assertOk(result);
+        assertEqual(result.result.roundedEndTimeText, '00:00', 'roundedEndTimeText');
+        assertEqual(result.result.remainingMinutes, 20, 'remainingMinutes');
+      });
+
+      addTest('終了予定時刻が現在時刻より後の場合の当日判定', function () {
+        var result = calculate({ volumeInput: '500', endTimeValue: '20:00', dropFactor: 20, now: fixedNow(8, 0) });
+        assertOk(result);
+        assertEqual(result.result.remainingMinutes, 720, 'remainingMinutes');
+      });
+
+      addTest('終了予定時刻が現在時刻より前の場合の翌日判定', function () {
+        var result = calculate({ volumeInput: '500', endTimeValue: '08:00', dropFactor: 20, now: fixedNow(20, 0) });
+        assertOk(result);
+        assertEqual(result.result.remainingMinutes, 720, 'remainingMinutes');
+      });
+
+      addTest('終了予定時刻が現在時刻と同じ場合の翌日判定', function () {
+        var result = calculate({ volumeInput: '500', endTimeValue: '08:00', dropFactor: 20, now: fixedNow(8, 0) });
+        assertOk(result);
+        assertEqual(result.result.remainingMinutes, 1440, 'remainingMinutes');
+      });
+
+      addTest('mL/h の丸め', function () {
+        var result = calculate({ volumeInput: '500', endTimeValue: '20:00', dropFactor: 20, now: fixedNow(8, 0) });
+        assertOk(result);
+        assertEqual(result.result.mlPerHourText, '42mL/h', 'mlPerHourText');
+      });
+
+      addTest('滴/分 の丸め', function () {
+        var result = calculate({ volumeInput: '500', endTimeValue: '20:00', dropFactor: 20, now: fixedNow(8, 0) });
+        assertOk(result);
+        assertEqual(result.result.dropsPerMinuteText, '14滴/分', 'dropsPerMinuteText');
+      });
+
+      addTest('秒/滴 の丸め', function () {
+        var result = calculate({ volumeInput: '500', endTimeValue: '20:00', dropFactor: 20, now: fixedNow(8, 0) });
+        assertOk(result);
+        assertEqual(result.result.secondsPerDropText, '約4秒に1滴', 'secondsPerDropText');
+        assertEqual(result.result.mainText, '約4秒に1滴', 'mainText');
+      });
+
+      addTest('1mL/h未満', function () {
+        var result = calculate({ volumeInput: '10', endTimeValue: '08:00', dropFactor: 15, now: new Date(2026, 4, 8, 8, 1, 45, 999) });
+        assertOk(result);
+        assertEqual(result.result.mlPerHourText, '1mL/h未満', 'mlPerHourText');
+      });
+
+      addTest('1滴/分未満', function () {
+        var result = calculate({ volumeInput: '10', endTimeValue: '08:00', dropFactor: 15, now: new Date(2026, 4, 8, 8, 1, 45, 999) });
+        assertOk(result);
+        assertEqual(result.result.mainText, '1滴/分未満', 'mainText');
+        assertEqual(result.result.dropsPerMinuteText, '1滴/分未満', 'dropsPerMinuteText');
+        assertEqual(result.result.secondsPerDropText, '', 'secondsPerDropText');
+      });
+
+      addTest('15滴/mLの計算', function () {
+        var result = calculate({ volumeInput: '500', endTimeValue: '20:00', dropFactor: 15, now: fixedNow(8, 0) });
+        assertOk(result);
+        assertEqual(result.result.dropsPerMinuteText, '10滴/分', 'dropsPerMinuteText');
+        assertEqual(result.result.secondsPerDropText, '約6秒に1滴', 'secondsPerDropText');
+      });
+
+      addTest('20滴/mLの計算', function () {
+        var result = calculate({ volumeInput: '500', endTimeValue: '20:00', dropFactor: 20, now: fixedNow(8, 0) });
+        assertOk(result);
+        assertEqual(result.result.dropsPerMinuteText, '14滴/分', 'dropsPerMinuteText');
+        assertEqual(result.result.secondsPerDropText, '約4秒に1滴', 'secondsPerDropText');
+      });
+
+      addTest('60滴/mLの計算', function () {
+        var result = calculate({ volumeInput: '500', endTimeValue: '20:00', dropFactor: 60, now: fixedNow(8, 0) });
+        assertOk(result);
+        assertEqual(result.result.dropsPerMinuteText, '42滴/分', 'dropsPerMinuteText');
+        assertEqual(result.result.secondsPerDropText, '約1秒に1滴', 'secondsPerDropText');
+      });
+
+      function runTests() {
+        var tbody = document.getElementById('results');
+        var summary = document.getElementById('summary');
+        var passed = 0;
+
+        tests.forEach(function (test) {
+          var row = document.createElement('tr');
+          var statusCell = document.createElement('td');
+          var nameCell = document.createElement('td');
+          var detailCell = document.createElement('td');
+          var detail = document.createElement('code');
+
+          nameCell.textContent = test.name;
+
+          try {
+            test.run();
+            passed += 1;
+            statusCell.textContent = 'PASS';
+            statusCell.className = 'pass';
+            detail.textContent = 'OK';
+          } catch (error) {
+            statusCell.textContent = 'FAIL';
+            statusCell.className = 'fail';
+            detail.textContent = error.message;
+          }
+
+          detailCell.appendChild(detail);
+          row.appendChild(statusCell);
+          row.appendChild(nameCell);
+          row.appendChild(detailCell);
+          tbody.appendChild(row);
+        });
+
+        summary.textContent = passed + ' / ' + tests.length + ' 件成功';
+        summary.className = passed === tests.length ? 'summary pass' : 'summary fail';
+      }
+
+      runTests();
+    })();
+  </script>
+</body>
+</html>

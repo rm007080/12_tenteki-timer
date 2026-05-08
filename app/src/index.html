@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>点滴タイマー</title>
+  <meta name="theme-color" content="#2563eb">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./style.css">
+  <script src="./calc.js" defer></script>
+  <script src="./app.js" defer></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('./service-worker.js');
+      });
+    }
+  </script>
+</head>
+<body>
+  <main class="app" aria-labelledby="app-title">
+    <header class="app-header">
+      <h1 id="app-title">点滴タイマー</h1>
+      <p class="notice">自然滴下の計算補助です。指示・施設ルールに従って確認してください。</p>
+    </header>
+
+    <form class="input-panel" id="calculation-form" novalidate>
+      <div class="field">
+        <label for="volume-input">現在バッグの残量</label>
+        <div class="input-with-unit">
+          <input
+            id="volume-input"
+            name="volume"
+            type="number"
+            inputmode="decimal"
+            autocomplete="off"
+            min="0"
+            step="any"
+            aria-describedby="volume-error"
+          >
+          <span class="unit">mL</span>
+        </div>
+        <p class="error-message" id="volume-error" aria-live="polite"></p>
+      </div>
+
+      <div class="field">
+        <label for="end-time-input">終了予定時刻</label>
+        <input
+          id="end-time-input"
+          name="endTime"
+          type="time"
+          autocomplete="off"
+          aria-describedby="end-time-error"
+        >
+        <p class="error-message" id="end-time-error" aria-live="polite"></p>
+      </div>
+
+      <fieldset class="drop-factor-group">
+        <legend>滴下係数</legend>
+        <div class="drop-factor-buttons" id="drop-factor-buttons">
+          <button class="factor-button" type="button" data-drop-factor="15" aria-pressed="false">15滴/mL</button>
+          <button class="factor-button is-selected" type="button" data-drop-factor="20" aria-pressed="true">20滴/mL</button>
+          <button class="factor-button" type="button" data-drop-factor="60" aria-pressed="false">60滴/mL</button>
+        </div>
+        <p class="error-message" id="drop-factor-error" aria-live="polite"></p>
+      </fieldset>
+
+      <button class="calculate-button" type="submit">計算する</button>
+    </form>
+
+    <section class="result-panel" aria-labelledby="result-title" aria-live="polite">
+      <h2 id="result-title">計算結果</h2>
+      <p class="main-result" id="main-result">結果はここに表示されます</p>
+      <p class="drops-result" id="drops-result"></p>
+      <p class="ml-result" id="ml-result"></p>
+      <p class="condition-text" id="condition-text"></p>
+    </section>
+  </main>
+</body>
+</html>

@@ -28,15 +28,17 @@
   ↓
 スマホブラウザ / ホーム画面PWA
   ↓
-index.html
+app/src/index.html
   ↓
-app.js ── 入力取得・検証・丸め・計算・表示更新
+app/src/app.js ── DOM操作・イベント処理・表示更新
   ↓
-style.css ── スマホ向けUI・ライト/ダークモード
+app/src/calc.js ── 入力検証・丸め・計算
   ↓
-manifest.json ── ホーム画面追加用設定
+app/src/style.css ── スマホ向けUI・ライト/ダークモード
   ↓
-service-worker.js ── オフラインキャッシュ
+app/src/manifest.json ── ホーム画面追加用設定
+  ↓
+app/src/service-worker.js ── オフラインキャッシュ
 ```
 
 サーバー側のアプリケーション、データベース、ログ収集基盤は持たない。
@@ -47,25 +49,29 @@ service-worker.js ── オフラインキャッシュ
 
 ```text
 tenteki-timer/
-├── index.html
-├── style.css
-├── app.js
-├── manifest.json
-├── service-worker.js
-└── icons/
-    ├── icon-192.png
-    └── icon-512.png
+└── app/
+    └── src/
+        ├── index.html
+        ├── style.css
+        ├── calc.js
+        ├── app.js
+        ├── manifest.json
+        ├── service-worker.js
+        └── icons/
+            ├── icon-192.png
+            └── icon-512.png
 ```
 
-当初の基本ファイルは以下の5つとする。
+当初の基本ファイルは `app/src/` 配下の以下6つとする。
 
 - index.html
 - style.css
+- calc.js
 - app.js
 - manifest.json
 - service-worker.js
 
-PWAアイコン用に、必要に応じて `icons/` ディレクトリを追加する。
+PWAアイコン用に、`app/src/icons/` ディレクトリを追加する。
 
 ---
 
@@ -108,27 +114,39 @@ PWAアイコン用に、必要に応じて `icons/` ディレクトリを追加�
 
 ---
 
-### 4.3 app.js
+### 4.3 calc.js
 
-アプリの主要ロジックを担当する。
+計算ロジックを担当する。DOMには直接触らず、固定した `now` を渡して確認できる純粋関数を `window.TentekiCalc` に公開する。
 
 主な責務：
 
-- DOM要素の取得
-- 滴下係数ボタンの選択状態管理
-- 「計算する」ボタン押下イベントの処理
 - 残量の入力チェック
 - 残量の10mL単位丸め
 - 残量の下限・上限チェック
+- 滴下係数の検証
 - 終了予定時刻の入力チェック
 - 終了予定時刻の10分単位丸め
-- 現在時刻の取得
 - 現在時刻の秒切り捨て
 - 終了予定時刻の当日・翌日判定
 - 残り時間の算出
 - mL/hの計算
 - 滴/分の計算
 - 秒/滴の計算
+- 表示用テキストと条件テキストの生成
+
+---
+
+### 4.4 app.js
+
+DOM操作とイベント処理を担当する。
+
+主な責務：
+
+- DOM要素の取得
+- 滴下係数ボタンの選択状態管理
+- 「計算する」ボタン押下イベントの処理
+- 現在時刻の取得
+- `window.TentekiCalc.calculate()` の呼び出し
 - 結果表示
 - 条件表示
 - エラー表示
@@ -136,7 +154,7 @@ PWAアイコン用に、必要に応じて `icons/` ディレクトリを追加�
 
 ---
 
-### 4.4 manifest.json
+### 4.5 manifest.json
 
 PWAとしてホーム画面に追加するための設定を担当する。
 
@@ -157,6 +175,7 @@ PWAとしてホーム画面に追加するための設定を担当する。
   "name": "点滴タイマー",
   "short_name": "点滴タイマー",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "icons": [
     {
@@ -175,7 +194,7 @@ PWAとしてホーム画面に追加するための設定を担当する。
 
 ---
 
-### 4.5 service-worker.js
+### 4.6 service-worker.js
 
 オフライン利用を担当する。
 
@@ -189,12 +208,13 @@ PWAとしてホーム画面に追加するための設定を担当する。
 キャッシュ対象：
 
 - `./`
-- `index.html`
-- `style.css`
-- `app.js`
-- `manifest.json`
-- `icons/icon-192.png`
-- `icons/icon-512.png`
+- `./index.html`
+- `./style.css`
+- `./calc.js`
+- `./app.js`
+- `./manifest.json`
+- `./icons/icon-192.png`
+- `./icons/icon-512.png`
 
 ---
 
@@ -488,12 +508,16 @@ CACHE_NAME = 'tenteki-timer-v1'
 
 GitHub Pagesを使用する。
 
+GitHub Pagesの公開元はリポジトリルートとし、アプリ本体は `app/src/` 配下に配置する。公開URLは `/<repo>/app/src/` とする。
+
+PWAの `start_url` と `scope` は `./` に固定し、GitHub Pages上では `/<repo>/app/src/` ディレクトリ内だけを対象にする。
+
 ```text
 GitHub Repository
   ↓
-GitHub Pages
+GitHub Pages（公開元: リポジトリルート）
   ↓
-公開URL
+公開URL: /<repo>/app/src/
   ↓
 スマホでアクセス
   ↓

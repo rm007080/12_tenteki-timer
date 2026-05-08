@@ -14,6 +14,8 @@ Reactなどのフレームワークは使用しない。サーバー、データ
 
 PWAとして構成し、GitHub Pagesに配置する。初回読み込み後はオフラインで利用できるようにする。
 
+GitHub Pagesの公開元はリポジトリルートとし、アプリ本体は `app/src/` 配下に置く。アプリURLは `/<repo>/app/src/` とする。
+
 ---
 
 ## 2. 採用技術一覧
@@ -241,6 +243,8 @@ const secondsPerDropDisplay = Math.round(60 / dropsPerMinuteDisplay);
 
 ### 7.2 推奨設定
 
+`manifest.json` は `app/src/manifest.json` に置く。`start_url` と `scope` は `./` に固定し、GitHub Pages上では `/<repo>/app/src/` ディレクトリ内をPWAの対象範囲にする。
+
 ```json
 {
   "name": "点滴タイマー",
@@ -297,6 +301,7 @@ const ASSETS = [
   './',
   './index.html',
   './style.css',
+  './calc.js',
   './app.js',
   './manifest.json',
   './icons/icon-192.png',
@@ -320,10 +325,13 @@ const CACHE_NAME = 'tenteki-timer-v1';
 
 GitHub Pagesは、静的ファイルを公開するために使用する。
 
-配置するファイル：
+公開元はリポジトリルートとする。アプリ本体は `app/src/` に配置し、公開URLは `/<repo>/app/src/` とする。
+
+`app/src/` に配置するファイル：
 
 - index.html
 - style.css
+- calc.js
 - app.js
 - manifest.json
 - service-worker.js
@@ -336,9 +344,9 @@ GitHubリポジトリを作成
   ↓
 ファイル一式を配置
   ↓
-GitHub Pagesを有効化
+リポジトリルートを公開元としてGitHub Pagesを有効化
   ↓
-公開URLをスマホで開く
+公開URL /<repo>/app/src/ をスマホで開く
   ↓
 ホーム画面に追加
   ↓
@@ -404,18 +412,21 @@ MVPで実装しないもの：
 
 ```text
 tenteki-timer/
-├── index.html
-├── style.css
-├── app.js
-├── manifest.json
-├── service-worker.js
-├── icons/
-│   ├── icon-192.png
-│   └── icon-512.png
-└── README.md
+├── README.md
+└── app/
+    └── src/
+        ├── index.html
+        ├── style.css
+        ├── calc.js
+        ├── app.js
+        ├── manifest.json
+        ├── service-worker.js
+        └── icons/
+            ├── icon-192.png
+            └── icon-512.png
 ```
 
-`README.md` は任意だが、GitHub上で管理する場合は作成を推奨する。
+`README.md` はリポジトリルートに置き、実装本体は `app/src/` に集約する。
 
 READMEに書く内容：
 
