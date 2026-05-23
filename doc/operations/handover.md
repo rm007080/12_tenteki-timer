@@ -8,8 +8,10 @@
 - Service Worker、manifest、仮アイコンを含む静的PWA構成は実装済み。
 - `app/src/` のHTTP配信、UI挙動、Service Worker登録、オフライン表示、オフライン計算は実ブラウザで確認済み。
 - MVP残件は、スマホ実機でのホーム画面追加確認とMVP完了条件の最終確認。
-- 新機能として、秒針ガイド追加計画を `doc/architecture/byosingaido-plan.md` に作成済み。
-- 秒針ガイド計画は残P1/P2を反映済み。最終 `codex-plan-review` でシニアエンジニア観点、UI/UX観点とも P0 0件、P1 0件、P2 0件を確認済み。
+- 新機能として、秒針ガイド機能を `doc/architecture/byosingaido-plan.md` に沿って実装済み。
+- 秒針ガイドは、計算前非表示、計算後表示、毎秒更新、前回結果表示、対象外表示、短間隔ラベル非表示までブラウザで確認済み。
+- サーバー停止後の再読み込みで、オフライン相当でも秒針ガイド付きの計算ができることを確認済み。
+- ローカルプレビュー、ポート起動・停止、`Directory listing for /` の切り分けは `logs/2026-05-24_local-preview-port-troubleshooting.md` に記録済み。ただし `logs/*` は `.gitignore` 対象なので、通常の `git status` には出ない。
 
 ## 最初に読むもの
 
@@ -46,6 +48,8 @@
 - 秒針ガイド機能の初期計画を作成し、レビュー指摘を1回反映した。
 - 更新後の秒針ガイド計画に対して再レビューを実施した。
 - 秒針ガイド計画へ残P1/P2を反映し、最終レビューで P0/P1/P2 0件を確認した。
+- 秒針ガイドの計算ロジック、UI、タイマー管理、Service Worker v2更新、ロジックテスト、関連文書更新を実装した。
+- `app/tests/calculation-test.html` で 36 / 36 件成功を確認した。
 
 ## 未完了
 
@@ -54,14 +58,51 @@
 - スマホ実機でホーム画面に追加できることを確認する。
 - `doc/architecture/implementation-plan.md` の完了条件を最終確認する。
 
-### 秒針ガイド実装残件
+### 秒針ガイド残件
 
-- `doc/architecture/byosingaido-plan.md` の計画に沿って、正本文書、実装チェックリスト、`app/src/`、`app/tests/` を更新する。
-- 実装後は秒針ガイド計画の Test Plan に従い、ロジックテスト、ブラウザ確認、PWA更新確認を行う。
+- v1キャッシュ導入済み状態からv2へ更新できることを実機相当で確認する。
 
 ## 次の1テーマ
 
-`doc/architecture/byosingaido-plan.md` の計画に沿って、秒針ガイド機能の実装に進む。
+秒針ガイド機能は実装済み。次は、v1キャッシュからv2への更新確認、スマホ実機でのホーム画面追加確認、MVP完了条件の最終確認に進む。
+
+## 再開時に実行するコマンド
+
+### ロジックテスト
+
+`app/tests/calculation-test.html` をブラウザで開く。ローカルHTTP配信で見る場合は、リポジトリルートで次を実行する。
+
+```powershell
+python -m http.server 4180 --bind 127.0.0.1
+```
+
+ブラウザで開くURL:
+
+```text
+http://127.0.0.1:4180/app/tests/calculation-test.html
+```
+
+直近の確認結果は `36 / 36 件成功`。
+
+### アプリ本体の手動確認
+
+リポジトリルートでHTTPサーバーを起動している場合、アプリURLは次。
+
+```text
+http://127.0.0.1:4180/app/src/
+```
+
+`http://127.0.0.1:4180/` だけを開くと、リポジトリルートの `Directory listing for /` が表示される。これはサーバー起動失敗ではなく、URLのパスがアプリ本体まで届いていない状態。
+
+### ポート確認
+
+ポートが開いているか確認する。
+
+```powershell
+Get-NetTCPConnection -LocalPort 4180 -State Listen -ErrorAction SilentlyContinue
+```
+
+何も表示されなければ閉じている。自分で起動したサーバーを止める場合は、そのPowerShellで `Ctrl + C` を押す。
 
 ## 実装時の重要ルール
 
@@ -81,6 +122,7 @@
 - Service Worker確認は `file://` ではなく、`app/src/` をローカルHTTPサーバーで配信して行う。
 - 手動確認項目は `doc/architecture/implementation-plan.md` のフェーズ6、および秒針ガイド計画の Test Plan に従う。
 - 秒針ガイド実装時は、固定 `nowMs` で確認できる純粋関数を `calc.js` に置く。
+- v1キャッシュからv2への更新確認は、v1を導入済みのブラウザ/PWA相当環境で確認する必要がある。現時点では、新規読み込み後のオフライン相当動作までは確認済みだが、既存v1キャッシュからの更新シナリオは未確認。
 
 ## 触らないもの
 
@@ -91,6 +133,5 @@
 
 ## 注意点
 
-- `doc/architecture/byosingaido-plan.md` は現時点で未追跡ファイルとして作成されている。
-- 現在の `git status --short` は、この引継ぎ更新前の時点で `?? doc/architecture/byosingaido-plan.md` が出ていた。
-- `app/README.md`、`todo/backlog.md`、`doc/operations/handover.md`、`doc/operations/Next-Agent-Prompt.md` は古い記述が残っていたため、今回の引継ぎ更新対象にした。
+- 秒針ガイド実装後も、スマホ実機のホーム画面追加確認は未完了。
+- v1キャッシュ導入済み状態からv2へ更新できることは、実機相当の確認が未完了。

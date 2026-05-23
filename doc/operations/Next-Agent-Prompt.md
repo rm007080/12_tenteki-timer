@@ -19,21 +19,52 @@
 - MVP本体は `app/src/` に実装済み。
 - 計算ロジックテストは `app/tests/calculation-test.html` にある。
 - Service Worker登録、オフライン表示、オフライン計算は実ブラウザで確認済み。
-- MVP残件はスマホ実機でのホーム画面追加確認と、MVP完了条件の最終確認。
-- 秒針ガイド機能の計画は `doc/architecture/byosingaido-plan.md` にある。
-- 秒針ガイド計画は残P1/P2を反映済み。最終 `codex-plan-review` でシニアエンジニア観点、UI/UX観点とも P0 0件 / P1 0件 / P2 0件。
+- 秒針ガイド機能は `doc/architecture/byosingaido-plan.md` に沿って実装済み。
+- `app/tests/calculation-test.html` は 36 / 36 件成功を確認済み。
+- 秒針ガイドは、計算前非表示、計算後表示、毎秒更新、前回結果表示、対象外表示、短間隔ラベル非表示、360x640 / 320x640 の横スクロールなしを確認済み。
+- サーバー停止後の再読み込みで、オフライン相当でも秒針ガイド付きの計算ができることを確認済み。
+- 残件は、v1キャッシュ導入済み状態からv2へ更新できることの実機相当確認、スマホ実機でのホーム画面追加確認、MVP完了条件の最終確認。
+- ローカルプレビューとポート確認のつまずきは `logs/2026-05-24_local-preview-port-troubleshooting.md` に記録済み。ただし `logs/*` は `.gitignore` 対象。
 
 ## 次の1テーマ
 
-`doc/architecture/byosingaido-plan.md` の計画に沿って、秒針ガイド機能の実装に進む。
+v1キャッシュ導入済み状態からv2へ更新できることの確認、スマホ実機でのホーム画面追加確認、MVP完了条件の最終確認に進む。
 
-## 実装時に守る主な計画ポイント
+## 再開コマンド
+
+ローカルHTTP配信:
+
+```powershell
+python -m http.server 4180 --bind 127.0.0.1
+```
+
+アプリ本体:
+
+```text
+http://127.0.0.1:4180/app/src/
+```
+
+ロジックテスト:
+
+```text
+http://127.0.0.1:4180/app/tests/calculation-test.html
+```
+
+ポート確認:
+
+```powershell
+Get-NetTCPConnection -LocalPort 4180 -State Listen -ErrorAction SilentlyContinue
+```
+
+`http://127.0.0.1:4180/` だけを開くとリポジトリルートの一覧が出る。アプリを見るには `/app/src/` まで付ける。
+
+## 実装済みの主なポイント
 
 - `calc.js` は `dropsPerMinuteValue`、`secondsPerDropRaw`、`secondsPerDropSeconds`、`isSecondGuideEligible` と `getSecondGuideState(anchorMs, intervalSeconds, nowMs)` をDOM非依存で公開する。
 - タイマー管理は再帰的 `setTimeout` と `guideRunId` で古い更新を無視する。
 - 成功後の自動リセットは前回結果化のトリガーにしない。ユーザー操作の入力変更やエラー時だけ、表示中のガイドが前回計算結果であることを可視表示する。
 - `N <= 2` の短間隔時は盤面上ラベルを出さず、外側凡例と実線/破線で意味を示す。
-- 自動スクロール、SVGサイズ、色コントラスト、フォーカス、`aria-live`、Service Worker v2更新は `byosingaido-plan.md` の Test Plan に従って確認する。
+- 自動スクロール、SVGサイズ、フォーカス、`aria-live`、Service Worker v2更新を反映済み。
 
 ## 守ること
 
@@ -47,6 +78,5 @@
 
 ## 確認メモ
 
-- `doc/architecture/byosingaido-plan.md` は現時点で未追跡ファイル。
 - 秒針ガイド計画レビューは P0/P1/P2 0件まで確認済み。
-- MVPを先に閉じる場合は、スマホ実機でホーム画面追加を確認し、`doc/architecture/implementation-plan.md` と `todo/now.md` を更新する。
+- MVPを閉じる場合は、スマホ実機でホーム画面追加を確認し、`doc/architecture/implementation-plan.md` と `todo/now.md` を更新する。

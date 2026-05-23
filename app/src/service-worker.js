@@ -1,6 +1,6 @@
 'use strict';
 
-const CACHE_NAME = 'tenteki-timer-v1';
+const CACHE_NAME = 'tenteki-timer-v2';
 const ASSETS = [
   './',
   './index.html',

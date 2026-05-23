@@ -96,6 +96,10 @@
         return new Date(2026, 4, 8, hour, minute, 45, 999);
       }
 
+      function fixedMs(hour, minute, second, millisecond) {
+        return new Date(2026, 4, 8, hour, minute, second, millisecond || 0).getTime();
+      }
+
       function calculate(input) {
         return window.TentekiCalc.calculate(input);
       }
@@ -107,6 +111,12 @@
       function assertEqual(actual, expected, label) {
         if (actual !== expected) {
           throw new Error(label + ': expected ' + JSON.stringify(expected) + ', got ' + JSON.stringify(actual));
+        }
+      }
+
+      function assertClose(actual, expected, tolerance, label) {
+        if (Math.abs(actual - expected) > tolerance) {
+          throw new Error(label + ': expected near ' + JSON.stringify(expected) + ', got ' + JSON.stringify(actual));
         }
       }
 
@@ -245,6 +255,7 @@
         assertOk(result);
         assertEqual(result.result.dropsPerMinuteText, '14滴/分', 'dropsPerMinuteText');
         assertEqual(result.result.secondsPerDropText, '約4秒に1滴', 'secondsPerDropText');
+        assertEqual(result.result.secondsPerDropSeconds, 4, 'secondsPerDropSeconds');
       });
 
       addTest('60滴/mLの計算', function () {
@@ -252,6 +263,122 @@
         assertOk(result);
         assertEqual(result.result.dropsPerMinuteText, '42滴/分', 'dropsPerMinuteText');
         assertEqual(result.result.secondsPerDropText, '約1秒に1滴', 'secondsPerDropText');
+        assertEqual(result.result.secondsPerDropSeconds, 1, 'secondsPerDropSeconds');
+      });
+
+      addTest('ガイド用の滴/分 raw と秒/滴 raw を返す', function () {
+        var result = calculate({ volumeInput: '500', endTimeValue: '20:00', dropFactor: 20, now: fixedNow(8, 0) });
+        assertOk(result);
+        assertClose(result.result.dropsPerMinuteValue, 13.8888888889, 0.000001, 'dropsPerMinuteValue');
+        assertClose(result.result.secondsPerDropRaw, 4.32, 0.000001, 'secondsPerDropRaw');
+        assertEqual(result.result.secondsPerDropSeconds, 4, 'secondsPerDropSeconds');
+        assertEqual(result.result.isSecondGuideEligible, true, 'isSecondGuideEligible');
+      });
+
+      addTest('15滴/mLではガイド間隔6秒を返す', function () {
+        var result = calculate({ volumeInput: '500', endTimeValue: '20:00', dropFactor: 15, now: fixedNow(8, 0) });
+        assertOk(result);
+        assertEqual(result.result.secondsPerDropSeconds, 6, 'secondsPerDropSeconds');
+        assertEqual(result.result.isSecondGuideEligible, true, 'isSecondGuideEligible');
+      });
+
+      addTest('60滴/mLではガイド間隔1秒を返す', function () {
+        var result = calculate({ volumeInput: '500', endTimeValue: '20:00', dropFactor: 60, now: fixedNow(8, 0) });
+        assertOk(result);
+        assertEqual(result.result.secondsPerDropSeconds, 1, 'secondsPerDropSeconds');
+        assertEqual(result.result.isSecondGuideEligible, true, 'isSecondGuideEligible');
+      });
+
+      addTest('1滴/分未満ではガイド秒数なし、対象外', function () {
+        var result = calculate({ volumeInput: '10', endTimeValue: '08:00', dropFactor: 15, now: new Date(2026, 4, 8, 8, 1, 45, 999) });
+        assertOk(result);
+        assertEqual(result.result.secondsPerDropSeconds, null, 'secondsPerDropSeconds');
+        assertEqual(result.result.isSecondGuideEligible, false, 'isSecondGuideEligible');
+      });
+
+      addTest('表示上約1秒でもrawが1秒未満ならガイド対象外', function () {
+        var result = calculate({ volumeInput: '700', endTimeValue: '18:00', dropFactor: 60, now: fixedNow(8, 0) });
+        assertOk(result);
+        assertEqual(result.result.secondsPerDropSeconds, 1, 'secondsPerDropSeconds');
+        assertClose(result.result.secondsPerDropRaw, 0.8571428571, 0.000001, 'secondsPerDropRaw');
+        assertEqual(result.result.isSecondGuideEligible, false, 'isSecondGuideEligible');
+      });
+
+      addTest('60秒以上の低滴下数はガイド対象外', function () {
+        var result = calculate({ volumeInput: '50', endTimeValue: '20:30', dropFactor: 15, now: fixedNow(8, 0) });
+        assertOk(result);
+        assertEqual(result.result.secondsPerDropSeconds, 60, 'secondsPerDropSeconds');
+        assertClose(result.result.secondsPerDropRaw, 60, 0.000001, 'secondsPerDropRaw');
+        assertEqual(result.result.isSecondGuideEligible, false, 'isSecondGuideEligible');
+      });
+
+      addTest('getSecondGuideState: 60を割り切る4秒間隔', function () {
+        var state = window.TentekiCalc.getSecondGuideState(fixedMs(8, 0, 0, 900), 4, fixedMs(8, 0, 0, 100));
+        assertEqual(state.normalizedAnchorMs, fixedMs(8, 0, 0, 0), 'normalizedAnchorMs');
+        assertEqual(state.normalizedNowMs, fixedMs(8, 0, 0, 0), 'normalizedNowMs');
+        assertEqual(state.currentAngleDeg, 0, 'currentAngleDeg');
+        assertEqual(state.nextMarkerAngleDeg, 24, 'nextMarkerAngleDeg');
+        assertEqual(state.followingMarkerAngleDeg, 48, 'followingMarkerAngleDeg');
+        assertEqual(state.rangeSweepAngleDeg, 24, 'rangeSweepAngleDeg');
+        assertEqual(state.showDialLabels, true, 'showDialLabels');
+      });
+
+      addTest('getSecondGuideState: 60を割り切らない7秒間隔', function () {
+        var state = window.TentekiCalc.getSecondGuideState(fixedMs(8, 0, 0, 0), 7, fixedMs(8, 0, 20, 0));
+        assertEqual(state.currentAngleDeg, 120, 'currentAngleDeg');
+        assertEqual(state.nextMarkerAngleDeg, 126, 'nextMarkerAngleDeg');
+        assertEqual(state.followingMarkerAngleDeg, 168, 'followingMarkerAngleDeg');
+        assertEqual(state.rangeSweepAngleDeg, 6, 'rangeSweepAngleDeg');
+      });
+
+      addTest('getSecondGuideState: 分またぎでも次目印と2つ先を返す', function () {
+        var state = window.TentekiCalc.getSecondGuideState(fixedMs(8, 0, 0, 0), 7, fixedMs(8, 0, 59, 0));
+        assertEqual(state.currentAngleDeg, 354, 'currentAngleDeg');
+        assertEqual(state.nextMarkerAngleDeg, 18, 'nextMarkerAngleDeg');
+        assertEqual(state.followingMarkerAngleDeg, 60, 'followingMarkerAngleDeg');
+        assertEqual(state.rangeSweepAngleDeg, 24, 'rangeSweepAngleDeg');
+      });
+
+      addTest('getSecondGuideState: 2つ先目印が更新される', function () {
+        var state = window.TentekiCalc.getSecondGuideState(fixedMs(8, 0, 0, 0), 4, fixedMs(8, 0, 5, 0));
+        assertEqual(state.currentAngleDeg, 30, 'currentAngleDeg');
+        assertEqual(state.nextMarkerAngleDeg, 48, 'nextMarkerAngleDeg');
+        assertEqual(state.followingMarkerAngleDeg, 72, 'followingMarkerAngleDeg');
+      });
+
+      addTest('getSecondGuideState: nowMs のミリ秒を切り捨てる', function () {
+        var state = window.TentekiCalc.getSecondGuideState(fixedMs(8, 0, 0, 900), 4, fixedMs(8, 0, 3, 900));
+        assertEqual(state.normalizedAnchorMs, fixedMs(8, 0, 0, 0), 'normalizedAnchorMs');
+        assertEqual(state.normalizedNowMs, fixedMs(8, 0, 3, 0), 'normalizedNowMs');
+        assertEqual(state.currentAngleDeg, 18, 'currentAngleDeg');
+        assertEqual(state.nextMarkerAngleDeg, 24, 'nextMarkerAngleDeg');
+      });
+
+      addTest('getSecondGuideState: nowMs === anchorMs でも未来の目印にする', function () {
+        var anchorMs = fixedMs(8, 0, 0, 0);
+        var state = window.TentekiCalc.getSecondGuideState(anchorMs, 4, anchorMs);
+        assertEqual(state.nextMarkerMs, fixedMs(8, 0, 4, 0), 'nextMarkerMs');
+        assertEqual(state.nextMarkerAngleDeg, 24, 'nextMarkerAngleDeg');
+      });
+
+      addTest('getSecondGuideState: interval境界でも未来の目印にする', function () {
+        var anchorMs = fixedMs(8, 0, 0, 0);
+        var nowMs = fixedMs(8, 0, 4, 0);
+        var state = window.TentekiCalc.getSecondGuideState(anchorMs, 4, nowMs);
+        assertEqual(state.nextMarkerMs, fixedMs(8, 0, 8, 0), 'nextMarkerMs');
+        assertEqual(state.nextMarkerAngleDeg, 48, 'nextMarkerAngleDeg');
+      });
+
+      addTest('getSecondGuideState: 短間隔1秒は盤面ラベルを出さない', function () {
+        var state = window.TentekiCalc.getSecondGuideState(fixedMs(8, 0, 0, 0), 1, fixedMs(8, 0, 0, 0));
+        assertEqual(state.showDialLabels, false, 'showDialLabels');
+        assertEqual(state.nextMarkerAngleDeg, 6, 'nextMarkerAngleDeg');
+      });
+
+      addTest('getSecondGuideState: 短間隔2秒は盤面ラベルを出さない', function () {
+        var state = window.TentekiCalc.getSecondGuideState(fixedMs(8, 0, 0, 0), 2, fixedMs(8, 0, 0, 0));
+        assertEqual(state.showDialLabels, false, 'showDialLabels');
+        assertEqual(state.nextMarkerAngleDeg, 12, 'nextMarkerAngleDeg');
       });
 
       function runTests() {

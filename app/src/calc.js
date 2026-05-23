@@ -112,6 +112,68 @@
     return { text: String(roundedValue) + unit, roundedValue: roundedValue, isLessThanOne: false };
   }
 
+  function floorToSecondMs(value) {
+    var numericValue = Number(value);
+    if (!Number.isFinite(numericValue)) {
+      return 0;
+    }
+
+    return Math.floor(numericValue / 1000) * 1000;
+  }
+
+  function secondAngleFromMs(value) {
+    var date = new Date(value);
+    return date.getSeconds() * 6;
+  }
+
+  function getNextMarkerMs(anchorMs, intervalMs, nowMs) {
+    var elapsedMs = nowMs - anchorMs;
+    var completedIntervals = Math.floor(elapsedMs / intervalMs);
+    var nextMarkerMs = anchorMs + (completedIntervals + 1) * intervalMs;
+
+    while (nextMarkerMs <= nowMs) {
+      nextMarkerMs += intervalMs;
+    }
+
+    return nextMarkerMs;
+  }
+
+  function getClockwiseSweepAngle(startAngle, endAngle) {
+    return (endAngle - startAngle + 360) % 360;
+  }
+
+  function getSecondGuideState(anchorMs, intervalSeconds, nowMs) {
+    var normalizedIntervalSeconds = Math.round(Number(intervalSeconds));
+    if (!Number.isFinite(normalizedIntervalSeconds) || normalizedIntervalSeconds <= 0) {
+      return null;
+    }
+
+    var normalizedAnchorMs = floorToSecondMs(anchorMs);
+    var normalizedNowMs = floorToSecondMs(nowMs);
+    var intervalMs = normalizedIntervalSeconds * 1000;
+    var nextMarkerMs = getNextMarkerMs(normalizedAnchorMs, intervalMs, normalizedNowMs);
+    var followingMarkerMs = nextMarkerMs + intervalMs;
+    var currentAngleDeg = secondAngleFromMs(normalizedNowMs);
+    var nextMarkerAngleDeg = secondAngleFromMs(nextMarkerMs);
+    var followingMarkerAngleDeg = secondAngleFromMs(followingMarkerMs);
+    var rangeSweepAngleDeg = getClockwiseSweepAngle(currentAngleDeg, nextMarkerAngleDeg);
+
+    return {
+      normalizedAnchorMs: normalizedAnchorMs,
+      normalizedNowMs: normalizedNowMs,
+      intervalSeconds: normalizedIntervalSeconds,
+      currentAngleDeg: currentAngleDeg,
+      nextMarkerAngleDeg: nextMarkerAngleDeg,
+      followingMarkerAngleDeg: followingMarkerAngleDeg,
+      rangeStartAngleDeg: currentAngleDeg,
+      rangeEndAngleDeg: nextMarkerAngleDeg,
+      rangeSweepAngleDeg: rangeSweepAngleDeg,
+      nextMarkerMs: nextMarkerMs,
+      followingMarkerMs: followingMarkerMs,
+      showDialLabels: normalizedIntervalSeconds > 2
+    };
+  }
+
   function calculate(options) {
     var input = options || {};
     var errors = {};
@@ -151,14 +213,22 @@
     var dropsPerMinuteRaw = volume.roundedVolumeMl / remainingMinutes * dropFactor.dropFactor;
     var mlPerHour = formatRoundedPositive(mlPerHourRaw, 'mL/h', '1mL/h未満');
     var dropsPerMinute = formatRoundedPositive(dropsPerMinuteRaw, '滴/分', '1滴/分未満');
+    var secondsPerDropRaw = dropsPerMinuteRaw > 0 ? 60 / dropsPerMinuteRaw : null;
+    var secondsPerDropSeconds = null;
     var secondsPerDropText = '';
     var mainText = dropsPerMinute.text;
 
     if (!dropsPerMinute.isLessThanOne) {
-      var secondsPerDrop = Math.round(60 / dropsPerMinute.roundedValue);
-      secondsPerDropText = '約' + secondsPerDrop + '秒に1滴';
+      secondsPerDropSeconds = Math.round(60 / dropsPerMinute.roundedValue);
+      secondsPerDropText = '約' + secondsPerDropSeconds + '秒に1滴';
       mainText = secondsPerDropText;
     }
+
+    var isSecondGuideEligible =
+      secondsPerDropRaw !== null &&
+      secondsPerDropRaw >= 1 &&
+      secondsPerDropSeconds !== null &&
+      secondsPerDropSeconds < 60;
 
     var conditionText = [
       '条件：残量' + volume.roundedVolumeMl + 'mL',
@@ -175,6 +245,10 @@
         dropsPerMinuteText: dropsPerMinute.text,
         mlPerHourText: mlPerHour.text,
         secondsPerDropText: secondsPerDropText,
+        dropsPerMinuteValue: dropsPerMinuteRaw,
+        secondsPerDropRaw: secondsPerDropRaw,
+        secondsPerDropSeconds: secondsPerDropSeconds,
+        isSecondGuideEligible: isSecondGuideEligible,
         conditionText: conditionText,
         roundedVolumeMl: volume.roundedVolumeMl,
         roundedEndTimeText: endTime.roundedEndTimeText,
@@ -184,7 +258,8 @@
   }
 
   global.TentekiCalc = {
-    calculate: calculate
+    calculate: calculate,
+    getSecondGuideState: getSecondGuideState
   };
 
   if (typeof module !== 'undefined' && module.exports) {
