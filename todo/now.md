@@ -2,13 +2,27 @@
 
 ## 次の1テーマ
 
-秒針ガイド機能の残確認として、v1キャッシュからv2への更新確認、スマホ実機ホーム画面追加確認、MVP完了条件の最終確認に進む。
+`doc/architecture/byosingaido-simplify-plan.md` に沿って、秒針ガイドの盤面内表示を簡素化し、Service Workerを `tenteki-timer-v3` へ更新したうえで、ブラウザ表示、v2導入済み状態からv3へのPWA更新、スマホ実機ホーム画面追加、MVP完了条件を確認する。
 
 ## 作業中
 
-- [ ] v1キャッシュ導入済み状態からv2へ更新できることを確認する
-- [ ] スマホ実機でホーム画面追加を確認する
+- [ ] `doc/architecture/byosingaido-simplify-plan.md` フェーズ1〜3に沿って、SVG盤面内表示、DOM更新、CSS、Service Workerを更新する
+- [ ] `doc/architecture/byosingaido-simplify-plan.md` フェーズ4に沿って、関連ドキュメントと `todo/` を更新する
+- [ ] `app/tests/calculation-test.html` から `showDialLabels` 前提の確認を削除し、既存角度確認を維持する
+- [ ] ローカルHTTP配信でロジックテストを全件成功させる
+- [ ] 320x640 / 360x640 × ライト/ダーク × `N > 2` / `N = 2` / `N = 1` で表示確認する
+- [ ] v2キャッシュ導入済み状態からv3へ更新できることを確認する
+- [ ] GitHub Pages URLで主端末スモーク確認を行う
+- [ ] iPhone / Android 両方でホーム画面追加、ホーム画面起動、オフライン再起動、オフライン計算を確認する
 - [ ] MVP完了条件の最終確認を行う
+
+## 秒針ガイド簡素化計画
+
+- [x] 秒針ガイド簡素化計画を `doc/architecture/byosingaido-simplify-plan.md` に作成する
+- [x] `codex-plan-review` を実施し、レビュー指摘を反映する
+- [x] 最終レビューでシニアエンジニア観点 P0/P1/P2 0件を確認する
+- [x] 最終レビューで UI/UX 観点 P0/P1/P2 0件を確認する
+- [x] `plan-to-checklist` を実施し、フェーズ別チェックリストへ再構成する
 
 ## 秒針ガイド 実装確認
 
@@ -16,7 +30,6 @@
 - [x] ブラウザで計算前非表示、計算後表示、毎秒更新、前回結果表示、対象外表示、短間隔ラベル非表示を確認する
 - [x] 360x640 と 320x640 で横スクロールが出ないことを確認する
 - [x] サーバー停止後の再読み込みで、オフライン相当でも計算と秒針ガイド表示ができることを確認する
-- [ ] v1キャッシュ導入済み状態からv2へ更新できることを確認する
 
 ## 秒針ガイド計画レビュー結果
 
@@ -26,8 +39,8 @@
 
 ## 次に続く作業
 
-- [ ] GitHub Pages公開URLまたはローカルHTTP配信で、スマホ実機のホーム画面追加を確認する
-- [ ] `doc/architecture/implementation-plan.md` の完了条件を実態に合わせて最終更新する
+- [ ] 秒針ガイド簡素化実装後、`doc/architecture/implementation-plan.md` の完了条件を実態に合わせて最終更新する
+- [ ] MVP完了条件を閉じる場合は、iPhone / Android 両方の実機PWA確認結果を `todo/now.md` と `doc/architecture/implementation-plan.md` に反映する
 
 ## 完了
 

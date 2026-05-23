@@ -7,10 +7,12 @@
 - 計算ロジック確認用の静的テストは `app/tests/calculation-test.html` にある。
 - Service Worker、manifest、仮アイコンを含む静的PWA構成は実装済み。
 - `app/src/` のHTTP配信、UI挙動、Service Worker登録、オフライン表示、オフライン計算は実ブラウザで確認済み。
-- MVP残件は、スマホ実機でのホーム画面追加確認とMVP完了条件の最終確認。
-- 新機能として、秒針ガイド機能を `doc/architecture/byosingaido-plan.md` に沿って実装済み。
-- 秒針ガイドは、計算前非表示、計算後表示、毎秒更新、前回結果表示、対象外表示、短間隔ラベル非表示までブラウザで確認済み。
+- 秒針ガイド機能は `doc/architecture/byosingaido-plan.md` に沿って実装済み。
+- `app/tests/calculation-test.html` は 36 / 36 件成功を確認済み。
+- 秒針ガイドは、計算前非表示、計算後表示、毎秒更新、前回結果表示、対象外表示、短間隔ラベル非表示、360x640 / 320x640 の横スクロールなしを確認済み。
 - サーバー停止後の再読み込みで、オフライン相当でも秒針ガイド付きの計算ができることを確認済み。
+- 秒針ガイド簡素化計画を `doc/architecture/byosingaido-simplify-plan.md` に作成し、`codex-plan-review` と `plan-to-checklist` を実施済み。
+- 秒針ガイド簡素化計画の最終レビューは、シニアエンジニア観点・UI/UX観点ともに P0/P1/P2 0件。
 - ローカルプレビュー、ポート起動・停止、`Directory listing for /` の切り分けは `logs/2026-05-24_local-preview-port-troubleshooting.md` に記録済み。ただし `logs/*` は `.gitignore` 対象なので、通常の `git status` には出ない。
 
 ## 最初に読むもの
@@ -22,7 +24,8 @@
 5. `doc/architecture/tech-stack.md`
 6. `doc/architecture/implementation-plan.md`
 7. `doc/architecture/byosingaido-plan.md`
-8. `todo/now.md`
+8. `doc/architecture/byosingaido-simplify-plan.md`
+9. `todo/now.md`
 
 ## 正本
 
@@ -31,6 +34,7 @@
 - 技術スタック: `doc/architecture/tech-stack.md`
 - MVP実装チェックリスト: `doc/architecture/implementation-plan.md`
 - 秒針ガイド計画: `doc/architecture/byosingaido-plan.md`
+- 秒針ガイド簡素化チェックリスト: `doc/architecture/byosingaido-simplify-plan.md`
 - ルート直下の `tenteki-timer-*.md` は使わない。現在は `archive/` に元文書がある。
 
 ## 完了済み
@@ -45,48 +49,52 @@
 - `app/src/manifest.json`、`app/src/service-worker.js`、`app/src/icons/` を実装した。
 - `app/src/` のHTTP配信、UI挙動、静的PWA設定、GitHub Pages想定URLを確認した。
 - 実ブラウザでService Worker登録、オフライン表示、オフライン計算を確認した。
-- 秒針ガイド機能の初期計画を作成し、レビュー指摘を1回反映した。
-- 更新後の秒針ガイド計画に対して再レビューを実施した。
+- 秒針ガイド機能の初期計画を作成し、レビュー指摘を反映した。
 - 秒針ガイド計画へ残P1/P2を反映し、最終レビューで P0/P1/P2 0件を確認した。
 - 秒針ガイドの計算ロジック、UI、タイマー管理、Service Worker v2更新、ロジックテスト、関連文書更新を実装した。
 - `app/tests/calculation-test.html` で 36 / 36 件成功を確認した。
+- 秒針ガイド簡素化計画を作成し、`codex-plan-review` の指摘を反映した。
+- 秒針ガイド簡素化計画をフェーズ別チェックリストへ再構成した。
 
 ## 未完了
 
-### MVP残件
+### 次に実装するテーマ
 
-- スマホ実機でホーム画面に追加できることを確認する。
-- `doc/architecture/implementation-plan.md` の完了条件を最終確認する。
+- `doc/architecture/byosingaido-simplify-plan.md` フェーズ1〜3に沿って、秒針ガイドの盤面内表示を簡素化する。
+- SVG盤面内の12/3/6/9時基準目盛りと「次」「2つ先」テキストを削除する。
+- 外側凡例をSVG直前へ移し、文言を「実線: 次の目印」「破線: 2つ先の目印」にする。
+- `app.js` のラベルDOM参照、`setLabelByAngle()`、ラベル表示制御を削除する。
+- `calc.js` の `getSecondGuideState()` から `showDialLabels` を削除する。
+- 目印線の長さ判定は `app.js` 側の `var usesLongMarkers = state.intervalSeconds > 2` として明示する。
+- Service Workerのキャッシュ名を `tenteki-timer-v3` に更新する。
+- Service Workerの旧キャッシュ削除は `tenteki-timer-` で始まるキャッシュだけを対象にし、無関係Cacheを削除しない。
 
-### 秒針ガイド残件
+### 実装後の確認
 
-- v1キャッシュ導入済み状態からv2へ更新できることを実機相当で確認する。
+- `app/tests/calculation-test.html` から `showDialLabels` 前提の確認を削除し、角度・次目印・2つ先目印・範囲角度の確認は維持する。
+- ローカルHTTP配信でロジックテストを全件成功させる。
+- 320x640 / 360x640 × ライト/ダーク × `N > 2` / `N = 2` / `N = 1` で、横スクロールなし、秒針、次目印、2つ先目印、色付き範囲、凡例が読めることを確認する。
+- v2キャッシュ導入済み状態からv3へ更新できることを確認する。
+- `tenteki-timer-v2` が削除され、無関係Cacheが削除されないことを確認する。
+- GitHub Pages URLで主端末スモーク確認を行う。
+- iPhone / Android 両方でホーム画面追加、ホーム画面起動、初回オンライン読み込み後の機内モード切替、ホーム画面アイコンからの再起動、オフライン計算を確認する。
+- MVP完了条件の最終確認を行い、完了できる場合は `doc/architecture/implementation-plan.md` と `todo/now.md` に反映する。
 
 ## 次の1テーマ
 
-秒針ガイド機能は実装済み。次は、v1キャッシュからv2への更新確認、スマホ実機でのホーム画面追加確認、MVP完了条件の最終確認に進む。
+`doc/architecture/byosingaido-simplify-plan.md` に沿って、秒針ガイドの盤面内表示を簡素化し、Service Workerを `tenteki-timer-v3` へ更新したうえで、ブラウザ表示、v2導入済み状態からv3へのPWA更新、スマホ実機ホーム画面追加、MVP完了条件を確認する。
 
 ## 再開時に実行するコマンド
 
-### ロジックテスト
+### ローカルHTTP配信
 
-`app/tests/calculation-test.html` をブラウザで開く。ローカルHTTP配信で見る場合は、リポジトリルートで次を実行する。
+リポジトリルートで次を実行する。
 
 ```powershell
 python -m http.server 4180 --bind 127.0.0.1
 ```
 
-ブラウザで開くURL:
-
-```text
-http://127.0.0.1:4180/app/tests/calculation-test.html
-```
-
-直近の確認結果は `36 / 36 件成功`。
-
-### アプリ本体の手動確認
-
-リポジトリルートでHTTPサーバーを起動している場合、アプリURLは次。
+### アプリ本体
 
 ```text
 http://127.0.0.1:4180/app/src/
@@ -94,9 +102,15 @@ http://127.0.0.1:4180/app/src/
 
 `http://127.0.0.1:4180/` だけを開くと、リポジトリルートの `Directory listing for /` が表示される。これはサーバー起動失敗ではなく、URLのパスがアプリ本体まで届いていない状態。
 
-### ポート確認
+### ロジックテスト
 
-ポートが開いているか確認する。
+```text
+http://127.0.0.1:4180/app/tests/calculation-test.html
+```
+
+直近の確認結果は `36 / 36 件成功`。簡素化実装後は、`showDialLabels` 前提の確認を削除したうえで再実行する。
+
+### ポート確認
 
 ```powershell
 Get-NetTCPConnection -LocalPort 4180 -State Listen -ErrorAction SilentlyContinue
@@ -110,6 +124,7 @@ Get-NetTCPConnection -LocalPort 4180 -State Listen -ErrorAction SilentlyContinue
 - React、ビルドツール、外部API、DB、ユーザーデータ保存APIは追加しない。
 - Cache APIはService Workerがアプリ本体ファイルをオフライン利用する目的に限って使う。
 - ユーザー入力値、計算結果、利用履歴を永続保存しない。
+- `localStorage`、`sessionStorage`、`IndexedDB`、Cookieは使わない。
 - 医療判断を代替する表現をUIやドキュメントに入れない。
 - UIには「自然滴下の計算補助です。指示・施設ルールに従って確認してください。」を表示する。
 - 実装本体は `app/src/` 配下に置く。
@@ -120,9 +135,9 @@ Get-NetTCPConnection -LocalPort 4180 -State Listen -ErrorAction SilentlyContinue
 
 - ロジック確認は `app/tests/calculation-test.html` をブラウザで開く方式にする。
 - Service Worker確認は `file://` ではなく、`app/src/` をローカルHTTPサーバーで配信して行う。
-- 手動確認項目は `doc/architecture/implementation-plan.md` のフェーズ6、および秒針ガイド計画の Test Plan に従う。
-- 秒針ガイド実装時は、固定 `nowMs` で確認できる純粋関数を `calc.js` に置く。
-- v1キャッシュからv2への更新確認は、v1を導入済みのブラウザ/PWA相当環境で確認する必要がある。現時点では、新規読み込み後のオフライン相当動作までは確認済みだが、既存v1キャッシュからの更新シナリオは未確認。
+- 手動確認項目は `doc/architecture/byosingaido-simplify-plan.md` のフェーズ6〜8に従う。
+- v2からv3への更新確認時は、v2状態のタブまたはPWAを閉じて再起動するか、DevToolsで `waiting` / `activated` 状態を確認してから再読み込みする。
+- MVP完了判定では、iPhone / Android 両方でホーム画面追加とオフライン再起動後の計算を確認する。
 
 ## 触らないもの
 
@@ -133,5 +148,7 @@ Get-NetTCPConnection -LocalPort 4180 -State Listen -ErrorAction SilentlyContinue
 
 ## 注意点
 
-- 秒針ガイド実装後も、スマホ実機のホーム画面追加確認は未完了。
-- v1キャッシュ導入済み状態からv2へ更新できることは、実機相当の確認が未完了。
+- `doc/architecture/byosingaido-simplify-plan.md` は新規作成された計画ファイルで、現時点の `git status` では未追跡。
+- 秒針ガイド簡素化の実装はまだ未着手。
+- Service Worker v3更新確認は、既存v2キャッシュ導入済み状態を作ってから行う。
+- スマホ実機のホーム画面追加確認は未完了。
