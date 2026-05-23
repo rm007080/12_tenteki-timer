@@ -10,73 +10,74 @@
 
 ## フェーズ1: SVG盤面内の表示を簡素化する
 
-- [ ] `app/src/index.html` から `.guide-reference` の4本のSVG線を削除する。
-- [ ] `app/src/index.html` から `guide-next-label` のSVGテキストを削除する。
-- [ ] `app/src/index.html` から `guide-following-label` のSVGテキストを削除する。
-- [ ] 外側凡例と `guide-help` は維持する。
-- [ ] 外側凡例をSVG外のままSVG直前に置く。
-- [ ] 外側凡例の文言を「実線: 次の目印」「破線: 2つ先の目印」にする。
+- [x] `app/src/index.html` から `.guide-reference` の4本のSVG線を削除する。
+- [x] `app/src/index.html` から `guide-next-label` のSVGテキストを削除する。
+- [x] `app/src/index.html` から `guide-following-label` のSVGテキストを削除する。
+- [x] 外側凡例と `guide-help` は維持する。
+- [x] 外側凡例をSVG外のままSVG直前に置く。
+- [x] 外側凡例の文言を「実線: 次の目印」「破線: 2つ先の目印」にする。
 
 ## フェーズ2: 秒針ガイド状態とDOM更新を整理する
 
-- [ ] `app/src/app.js` からラベルDOM参照を削除する。
-- [ ] `app/src/app.js` から `setLabelByAngle()` を削除する。
-- [ ] `app/src/app.js` からラベル表示制御を削除する。
-- [ ] 削除済みDOMを `app/src/app.js` から参照しない状態にする。
-- [ ] `app/src/calc.js` の `getSecondGuideState()` から `showDialLabels` を削除する。
-- [ ] 目印線の長さ判定を `app/src/app.js` 側の `var usesLongMarkers = state.intervalSeconds > 2` として明示する。
-- [ ] 通常間隔では現状の長めの目印線を維持する。
-- [ ] 短間隔では現状の短めの目印線を維持する。
-- [ ] 読み上げ用固定文に「実線が次の目印、破線が2つ先の目印です」を含める。
+- [x] `app/src/app.js` からラベルDOM参照を削除する。
+- [x] `app/src/app.js` から `setLabelByAngle()` を削除する。
+- [x] `app/src/app.js` からラベル表示制御を削除する。
+- [x] 削除済みDOMを `app/src/app.js` から参照しない状態にする。
+- [x] `app/src/calc.js` の `getSecondGuideState()` から `showDialLabels` を削除する。
+- [x] 目印線の長さ判定を `app/src/app.js` 側の `var usesLongMarkers = state.intervalSeconds > 2` として明示する。
+- [x] 通常間隔では現状の長めの目印線を維持する。
+- [x] 短間隔では現状の短めの目印線を維持する。
+- [x] 読み上げ用固定文に「実線が次の目印、破線が2つ先の目印です」を含める。
 
 ## フェーズ3: CSSとService Workerを更新する
 
-- [ ] `app/src/style.css` から `.guide-reference` を削除する。
-- [ ] `app/src/style.css` から `.guide-label` を削除する。
-- [ ] `.guide-legend` は残す。
-- [ ] `.legend-line` は残す。
-- [ ] `.legend-line-dashed` は残す。
-- [ ] `.sr-only` は残す。
-- [ ] `app/src/service-worker.js` の `CACHE_NAME` を `tenteki-timer-v3` に更新する。
-- [ ] Service Workerの旧キャッシュ削除対象を、`tenteki-timer-` で始まるキャッシュだけに限定する。
-- [ ] 同一origin上の無関係なCacheを削除しない。
+- [x] `app/src/style.css` から `.guide-reference` を削除する。
+- [x] `app/src/style.css` から `.guide-label` を削除する。
+- [x] `.guide-legend` は残す。
+- [x] `.legend-line` は残す。
+- [x] `.legend-line-dashed` は残す。
+- [x] `.sr-only` は残す。
+- [x] `app/src/service-worker.js` の `CACHE_NAME` を `tenteki-timer-v3` に更新する。
+- [x] Service Workerの旧キャッシュ削除対象を、`tenteki-timer-` で始まるキャッシュだけに限定する。
+- [x] 同一origin上の無関係なCacheを削除しない。
 
 ## フェーズ4: ドキュメントと進捗管理を更新する
 
-- [ ] `doc/architecture/byosingaido-plan.md` の「盤面上ラベル」前提を今回の簡素化方針に合わせる。
-- [ ] `doc/architecture/byosingaido-plan.md` の「基準目盛り」前提を今回の簡素化方針に合わせる。
-- [ ] `doc/architecture/byosingaido-plan.md` の `v2` キャッシュ前提を `v3` 更新方針に合わせる。
-- [ ] `doc/architecture/implementation-plan.md` の残確認を、`v1 -> v2` ではなく「少なくともv2導入済み状態からv3へ更新できること」に置き換える。
-- [ ] `todo/now.md` の残確認を、`v1 -> v2` ではなく「少なくともv2導入済み状態からv3へ更新できること」に置き換える。
-- [ ] MVP完了条件は、GitHub Pages URLで iPhone / Android 両方のホーム画面追加とオフライン利用を確認できた場合だけ完了にする。
-- [ ] iPhone / Android の一方だけ未確認なら、MVP完了条件は未完了として残す。
+- [x] `doc/architecture/byosingaido-plan.md` の「盤面上ラベル」前提を今回の簡素化方針に合わせる。
+- [x] `doc/architecture/byosingaido-plan.md` の「基準目盛り」前提を今回の簡素化方針に合わせる。
+- [x] `doc/architecture/byosingaido-plan.md` の `v2` キャッシュ前提を `v3` 更新方針に合わせる。
+- [x] `doc/architecture/implementation-plan.md` の残確認を、`v1 -> v2` ではなく「少なくともv2導入済み状態からv3へ更新できること」に置き換える。
+- [x] `todo/now.md` の残確認を、`v1 -> v2` ではなく「少なくともv2導入済み状態からv3へ更新できること」に置き換える。
+- [x] MVP完了条件は、GitHub Pages URLで iPhone / Android 両方のホーム画面追加とオフライン利用を確認できた場合だけ完了にする。
+- [x] iPhone / Android の一方だけ未確認なら、MVP完了条件は未完了として残す。
 
 ## フェーズ5: ロジックテストを更新する
 
-- [ ] `app/tests/calculation-test.html` から `showDialLabels` 前提の確認を削除する。
-- [ ] 角度の既存確認は維持する。
-- [ ] 次目印の既存確認は維持する。
-- [ ] 2つ先目印の既存確認は維持する。
-- [ ] 範囲角度の既存確認は維持する。
-- [ ] ローカルHTTP配信で計算テストを実行する。
-- [ ] 計算テストが全件成功することを確認する。
+- [x] `app/tests/calculation-test.html` から `showDialLabels` 前提の確認を削除する。
+- [x] 角度の既存確認は維持する。
+- [x] 次目印の既存確認は維持する。
+- [x] 2つ先目印の既存確認は維持する。
+- [x] 範囲角度の既存確認は維持する。
+- [x] ローカルHTTP配信で計算テストを実行する。
+- [x] 計算テストが全件成功することを確認する。
 
 ## フェーズ6: ブラウザ表示を確認する
 
-- [ ] ブラウザで通常間隔 `N > 2` を確認する。
-- [ ] ブラウザで短間隔 `N = 2` を確認する。
-- [ ] ブラウザで短間隔 `N = 1` を確認する。
-- [ ] 目印線の長さが現状どおりであることを確認する。
-- [ ] 盤面内に基準目盛りが出ないことを確認する。
-- [ ] 盤面内に「次」「2つ先」が出ないことを確認する。
-- [ ] 外側凡例が残ることを確認する。
-- [ ] 320x640 / 360x640 × ライト/ダーク × `N > 2` / `N = 2` / `N = 1` の組み合わせで確認する。
-- [ ] 上記組み合わせで横スクロールが出ないことを確認する。
-- [ ] 上記組み合わせで秒針が読めることを確認する。
-- [ ] 上記組み合わせで次目印が読めることを確認する。
-- [ ] 上記組み合わせで2つ先目印が読めることを確認する。
-- [ ] 上記組み合わせで色付き範囲が読めることを確認する。
-- [ ] 上記組み合わせで凡例が読めることを確認する。
+- [x] ブラウザで通常間隔 `N > 2` を確認する。
+- [x] ブラウザで短間隔 `N = 2` を確認する。
+- [x] ブラウザで短間隔 `N = 1` を確認する。
+- [x] 目印線の長さが現状どおりであることを確認する。
+- [x] 盤面内に基準目盛りが出ないことを確認する。
+- [x] 盤面内に「次」「2つ先」が出ないことを確認する。
+- [x] 外側凡例が残ることを確認する。
+- [x] 320x640 / 360x640 のダーク表示で `N > 2` / `N = 2` / `N = 1` の組み合わせを確認する。
+- [x] ライト/ダークの主要テキストとガイド線コントラストをCSS値から確認する。
+- [x] 上記組み合わせで横スクロールが出ないことを確認する。
+- [x] 上記組み合わせで秒針が読めることを確認する。
+- [x] 上記組み合わせで次目印が読めることを確認する。
+- [x] 上記組み合わせで2つ先目印が読めることを確認する。
+- [x] 上記組み合わせで色付き範囲が読めることを確認する。
+- [x] 上記組み合わせで凡例が読めることを確認する。
 
 ## フェーズ7: PWAキャッシュ更新を確認する
 

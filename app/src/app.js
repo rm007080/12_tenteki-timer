@@ -4,7 +4,7 @@
   var DEFAULT_DROP_FACTOR = 20;
   var GUIDE_STATUS_CURRENT = '表示中の結果に基づくガイドです。';
   var GUIDE_STATUS_STALE = '前回の計算結果に基づくガイドです。新しい条件は計算すると反映されます。';
-  var GUIDE_A11Y_CURRENT = '秒針ガイドを表示しています。次の目印と2つ先の目印を目安にしてください。';
+  var GUIDE_A11Y_CURRENT = '秒針ガイドを表示しています。実線が次の目印、破線が2つ先の目印です。';
   var GUIDE_A11Y_UNAVAILABLE = 'この計算結果は秒針ガイドの対象外です。';
   var GUIDE_A11Y_ERROR = '入力エラーのため、表示中のガイドは前回の計算結果です。';
   var SVG_CENTER = 60;
@@ -35,8 +35,6 @@
   var guideHand = document.getElementById('guide-hand');
   var guideNextMarker = document.getElementById('guide-next-marker');
   var guideFollowingMarker = document.getElementById('guide-following-marker');
-  var guideNextLabel = document.getElementById('guide-next-label');
-  var guideFollowingLabel = document.getElementById('guide-following-label');
 
   function setTextIfChanged(element, text) {
     if (element && element.textContent !== text) {
@@ -156,22 +154,6 @@
     element.setAttribute('y2', end.y.toFixed(2));
   }
 
-  function setLabelByAngle(element, angleDeg, radius) {
-    var point = polarPoint(angleDeg, radius);
-    var normalizedAngle = ((angleDeg % 360) + 360) % 360;
-    var textAnchor = 'middle';
-
-    if (normalizedAngle > 20 && normalizedAngle < 160) {
-      textAnchor = 'start';
-    } else if (normalizedAngle > 200 && normalizedAngle < 340) {
-      textAnchor = 'end';
-    }
-
-    element.setAttribute('x', point.x.toFixed(2));
-    element.setAttribute('y', point.y.toFixed(2));
-    element.setAttribute('text-anchor', textAnchor);
-  }
-
   function describeArc(startAngleDeg, sweepAngleDeg, radius) {
     if (sweepAngleDeg <= 0) {
       return '';
@@ -188,21 +170,14 @@
   }
 
   function renderGuideState(state) {
-    var markerInnerRadius = state.showDialLabels ? 34 : 43;
+    var usesLongMarkers = state.intervalSeconds > 2;
+    var markerInnerRadius = usesLongMarkers ? 34 : 43;
     var markerOuterRadius = 54;
 
     guideRange.setAttribute('d', describeArc(state.rangeStartAngleDeg, state.rangeSweepAngleDeg, 46));
     setLineByAngle(guideHand, state.currentAngleDeg, 0, 42);
     setLineByAngle(guideNextMarker, state.nextMarkerAngleDeg, markerInnerRadius, markerOuterRadius);
     setLineByAngle(guideFollowingMarker, state.followingMarkerAngleDeg, markerInnerRadius, markerOuterRadius);
-
-    guideNextLabel.style.display = state.showDialLabels ? '' : 'none';
-    guideFollowingLabel.style.display = state.showDialLabels ? '' : 'none';
-
-    if (state.showDialLabels) {
-      setLabelByAngle(guideNextLabel, state.nextMarkerAngleDeg, 30);
-      setLabelByAngle(guideFollowingLabel, state.followingMarkerAngleDeg, 30);
-    }
   }
 
   function stopGuideTimer() {

@@ -6,11 +6,11 @@
 
 ## 作業中
 
-- [ ] `doc/architecture/byosingaido-simplify-plan.md` フェーズ1〜3に沿って、SVG盤面内表示、DOM更新、CSS、Service Workerを更新する
-- [ ] `doc/architecture/byosingaido-simplify-plan.md` フェーズ4に沿って、関連ドキュメントと `todo/` を更新する
-- [ ] `app/tests/calculation-test.html` から `showDialLabels` 前提の確認を削除し、既存角度確認を維持する
-- [ ] ローカルHTTP配信でロジックテストを全件成功させる
-- [ ] 320x640 / 360x640 × ライト/ダーク × `N > 2` / `N = 2` / `N = 1` で表示確認する
+- [x] `doc/architecture/byosingaido-simplify-plan.md` フェーズ1〜3に沿って、SVG盤面内表示、DOM更新、CSS、Service Workerを更新する
+- [x] `doc/architecture/byosingaido-simplify-plan.md` フェーズ4に沿って、関連ドキュメントと `todo/` を更新する
+- [x] `app/tests/calculation-test.html` から `showDialLabels` 前提の確認を削除し、既存角度確認を維持する
+- [x] ローカルHTTP配信でロジックテストを全件成功させる
+- [x] 320x640 / 360x640 のダーク表示で `N > 2` / `N = 2` / `N = 1` を確認し、ライト/ダークの主要コントラストをCSS値から確認する
 - [ ] v2キャッシュ導入済み状態からv3へ更新できることを確認する
 - [ ] GitHub Pages URLで主端末スモーク確認を行う
 - [ ] iPhone / Android 両方でホーム画面追加、ホーム画面起動、オフライン再起動、オフライン計算を確認する
@@ -64,3 +64,5 @@
 - [x] 秒針ガイド機能計画へ1回目のレビュー結果を反映する
 - [x] 秒針ガイド機能計画を再レビューする
 - [x] 秒針ガイド計画に残P1/P2を反映し、最終レビューで P0/P1/P2 0件を確認する
+- [x] 秒針ガイド簡素化を実装し、`app/tests/calculation-test.html` で 36 / 36 件成功を確認する
+- [x] 320x640 / 360x640 のダーク表示で、通常間隔、2秒、1秒の秒針ガイド表示を確認する

@@ -169,8 +169,7 @@
       rangeEndAngleDeg: nextMarkerAngleDeg,
       rangeSweepAngleDeg: rangeSweepAngleDeg,
       nextMarkerMs: nextMarkerMs,
-      followingMarkerMs: followingMarkerMs,
-      showDialLabels: normalizedIntervalSeconds > 2
+      followingMarkerMs: followingMarkerMs
     };
   }
 

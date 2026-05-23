@@ -1,6 +1,6 @@
 'use strict';
 
-const CACHE_NAME = 'tenteki-timer-v2';
+const CACHE_NAME = 'tenteki-timer-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -22,7 +22,7 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => Promise.all(
       cacheNames
-        .filter((cacheName) => cacheName !== CACHE_NAME)
+        .filter((cacheName) => cacheName !== CACHE_NAME && cacheName.startsWith('tenteki-timer-'))
         .map((cacheName) => caches.delete(cacheName))
     ))
   );

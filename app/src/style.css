@@ -275,12 +275,6 @@ input[aria-invalid="true"] {
   stroke-width: 2;
 }
 
-.guide-reference {
-  stroke: var(--guide-muted-line);
-  stroke-linecap: round;
-  stroke-width: 2;
-}
-
 .guide-range {
   fill: none;
   stroke: var(--guide-range);
@@ -310,12 +304,6 @@ input[aria-invalid="true"] {
 
 .guide-center {
   fill: var(--guide-line);
-}
-
-.guide-label {
-  fill: var(--text);
-  font-size: 0.34rem;
-  font-weight: 800;
 }
 
 .guide-legend {

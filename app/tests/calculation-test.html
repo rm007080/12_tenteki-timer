@@ -320,7 +320,6 @@
         assertEqual(state.nextMarkerAngleDeg, 24, 'nextMarkerAngleDeg');
         assertEqual(state.followingMarkerAngleDeg, 48, 'followingMarkerAngleDeg');
         assertEqual(state.rangeSweepAngleDeg, 24, 'rangeSweepAngleDeg');
-        assertEqual(state.showDialLabels, true, 'showDialLabels');
       });
 
       addTest('getSecondGuideState: 60を割り切らない7秒間隔', function () {
@@ -369,15 +368,13 @@
         assertEqual(state.nextMarkerAngleDeg, 48, 'nextMarkerAngleDeg');
       });
 
-      addTest('getSecondGuideState: 短間隔1秒は盤面ラベルを出さない', function () {
+      addTest('getSecondGuideState: 短間隔1秒でも次目印を返す', function () {
         var state = window.TentekiCalc.getSecondGuideState(fixedMs(8, 0, 0, 0), 1, fixedMs(8, 0, 0, 0));
-        assertEqual(state.showDialLabels, false, 'showDialLabels');
         assertEqual(state.nextMarkerAngleDeg, 6, 'nextMarkerAngleDeg');
       });
 
-      addTest('getSecondGuideState: 短間隔2秒は盤面ラベルを出さない', function () {
+      addTest('getSecondGuideState: 短間隔2秒でも次目印を返す', function () {
         var state = window.TentekiCalc.getSecondGuideState(fixedMs(8, 0, 0, 0), 2, fixedMs(8, 0, 0, 0));
-        assertEqual(state.showDialLabels, false, 'showDialLabels');
         assertEqual(state.nextMarkerAngleDeg, 12, 'nextMarkerAngleDeg');
       });
 

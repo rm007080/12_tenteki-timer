@@ -80,24 +80,18 @@
         <p class="guide-note">目安ガイドです。指示・施設ルールに従って確認してください。</p>
         <p class="sr-only" id="guide-a11y"></p>
         <div class="guide-dial" id="guide-dial" hidden>
+          <div class="guide-legend" aria-hidden="true">
+            <span><span class="legend-line legend-line-solid"></span>実線: 次の目印</span>
+            <span><span class="legend-line legend-line-dashed"></span>破線: 2つ先の目印</span>
+          </div>
           <svg class="guide-svg" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
             <circle class="guide-face" cx="60" cy="60" r="54"></circle>
-            <line class="guide-reference" x1="60" y1="8" x2="60" y2="16"></line>
-            <line class="guide-reference" x1="112" y1="60" x2="104" y2="60"></line>
-            <line class="guide-reference" x1="60" y1="112" x2="60" y2="104"></line>
-            <line class="guide-reference" x1="8" y1="60" x2="16" y2="60"></line>
             <path class="guide-range" id="guide-range"></path>
             <line class="guide-marker guide-next-marker" id="guide-next-marker"></line>
             <line class="guide-marker guide-following-marker" id="guide-following-marker"></line>
             <line class="guide-hand" id="guide-hand"></line>
             <circle class="guide-center" cx="60" cy="60" r="3"></circle>
-            <text class="guide-label" id="guide-next-label" dominant-baseline="middle">次</text>
-            <text class="guide-label" id="guide-following-label" dominant-baseline="middle">2つ先</text>
           </svg>
-          <div class="guide-legend" aria-hidden="true">
-            <span><span class="legend-line legend-line-solid"></span>実線: 次</span>
-            <span><span class="legend-line legend-line-dashed"></span>破線: 2つ先</span>
-          </div>
           <p class="guide-help">色付きの範囲は、現在秒針から次の目印までの目安です。</p>
         </div>
         <p class="guide-unavailable" id="guide-unavailable" hidden></p>
