@@ -2,7 +2,7 @@
 
 ## 次の1テーマ
 
-`doc/architecture/byosingaido-simplify-plan.md` に沿って、秒針ガイドの盤面内表示を簡素化し、Service Workerを `tenteki-timer-v3` へ更新したうえで、ブラウザ表示、v2導入済み状態からv3へのPWA更新、スマホ実機ホーム画面追加、MVP完了条件を確認する。
+v2キャッシュ導入済み状態からv3へ更新できることを実ブラウザまたは実機相当で確認し、その後GitHub Pages URLとiPhone / Android実機PWA確認を行ってMVP完了条件を閉じる。
 
 ## 作業中
 
@@ -39,7 +39,7 @@
 
 ## 次に続く作業
 
-- [ ] 秒針ガイド簡素化実装後、`doc/architecture/implementation-plan.md` の完了条件を実態に合わせて最終更新する
+- [x] 秒針ガイド簡素化実装後、`doc/architecture/implementation-plan.md` の完了条件を実態に合わせて最終更新する
 - [ ] MVP完了条件を閉じる場合は、iPhone / Android 両方の実機PWA確認結果を `todo/now.md` と `doc/architecture/implementation-plan.md` に反映する
 
 ## 完了
@@ -66,3 +66,4 @@
 - [x] 秒針ガイド計画に残P1/P2を反映し、最終レビューで P0/P1/P2 0件を確認する
 - [x] 秒針ガイド簡素化を実装し、`app/tests/calculation-test.html` で 36 / 36 件成功を確認する
 - [x] 320x640 / 360x640 のダーク表示で、通常間隔、2秒、1秒の秒針ガイド表示を確認する
+- [x] `doc/operations/handover.md` と `doc/operations/Next-Agent-Prompt.md` を最新状態へ更新する
