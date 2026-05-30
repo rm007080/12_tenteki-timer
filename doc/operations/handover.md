@@ -8,13 +8,14 @@
 - 計算ロジック確認用の静的テストは `app/tests/calculation-test.html` にある。
 - Service Worker、manifest、仮アイコンを含む静的PWA構成は実装済み。
 - 秒針ガイド機能と秒針ガイド簡素化は実装済み。
-- 現行Service Workerのキャッシュ名は `tenteki-timer-v3`。
+- 現行Service Workerのキャッシュ名は `tenteki-timer-v4`。
 - Service Workerの旧キャッシュ削除対象は、`tenteki-timer-` で始まるCacheだけに限定済み。
 - GitHub Pages URLで主端末スモーク確認済み。
 - iPhone / Android 両方でホーム画面追加、ホーム画面起動、オフライン再起動、オフライン計算を確認済み。
-- 新しい改善テーマとして、秒針ガイドを常時表示の秒針時計へ置き換える計画を `doc/architecture/04_byoshin-only-plan.md` に作成済み。
+- 秒針ガイドを常時表示の現在秒時計へ置き換える改善は実装済み。
 - `04_byoshin-only-plan.md` は `codex-plan-review` 済み。シニアエンジニア観点と UI/UX 観点のサブレビューを実施し、最終的に P0/P1/P2 0件を確認済み。
-- 秒針時計化の実装は未着手。
+- 現在秒時計化後のロジックテスト、構文確認、ブラウザ確認、v3からv4へのPWA更新確認、オフライン表示・計算確認は完了済み。
+- 現時点の次テーマは未設定。
 
 ## 最初に読むもの
 
@@ -68,43 +69,42 @@
 - 秒針時計化計画に `codex-plan-review` を実施し、レビュー指摘を反映して P0/P1/P2 0件を確認した。
 - 今後の機能追加計画でPWA更新確認が漏れないよう、`doc/architecture/00_plan-template.md` を追加し、`AGENTS.md` に計画作成ルールを追記した。
 - `doc/operations/handover.md` と `doc/operations/Next-Agent-Prompt.md` を秒針時計化の実装前状態へ更新した。
+- 秒針時計化を実装し、起動直後から結果パネル下部に常時表示される現在秒時計へ置き換えた。
+- 時計盤に 0, 5, 10 ... 55 の数字、60本目盛り、5秒ごとの長い目盛りを表示した。
+- 計算連動の次目印、2つ先目印、色付き範囲、凡例、対象外表示、ガイド状態文を削除した。
+- 前回結果表示を結果側の小さな表示欄へ移し、計算成功時に消えるようにした。
+- `calc.js` に `getSecondClockState(nowMs)` を追加し、`getSecondGuideState()` とガイド専用戻り値を削除した。
+- Service Workerのキャッシュ名を `tenteki-timer-v4` に更新した。
+- `specs/requirements.md`、`overview.md`、`tech-stack.md`、`01_implementation-plan.md`、`README.md`、`AGENTS.md`、`todo/now.md` を現在秒時計仕様へ更新した。
 
 ## 次の1テーマ
 
-`doc/architecture/04_byoshin-only-plan.md` に沿って、既存の計算連動秒針ガイドを、計算結果と連動しない常時表示の「現在秒」時計へ置き換える。
+現時点の次テーマは未設定。
 
-実装時の要点:
-
-- 起動直後から結果パネル下部に秒針時計を表示する。
-- 時計は計算結果とは完全に独立させ、滴下間隔を強調・表示しない。
-- 時計盤の近くに「現在秒」と「現在時刻の秒です。滴下タイミングを示すものではありません。」を表示する。
-- 既存の「次の目印」「2つ先の目印」「色付き範囲」「凡例」「対象外表示」は削除する。
-- 入力変更・エラー時の「前回の計算結果」表示は、秒針周辺ではなく結果側の小さな表示欄へ移す。
-- `calc.js` に `getSecondClockState(nowMs)` を必須で追加し、固定時刻で針角度を確認できるようにする。
-- `app.js` は `Date.now()` を `getSecondClockState(nowMs)` に渡し、SVG属性へ反映するだけにする。
-- Service Workerのキャッシュ名は `tenteki-timer-v4` に上げる。
-- `AGENTS.md`、`README.md`、`todo/now.md`、引継ぎ文書に残る旧パスを番号付き文書へ統一する。
-- 新しい計画を追加する場合は `doc/architecture/00_plan-template.md` を使い、`PWA更新確認` を必ず埋める。
+新しい計画を追加する場合は `doc/architecture/00_plan-template.md` を使い、`PWA更新確認` を必ず埋める。
 
 ## 未完了・未検証
 
-- 秒針時計化のコード実装は未着手。
-- `specs/requirements.md`、`overview.md`、`tech-stack.md`、`01_implementation-plan.md` の秒針時計化反映は未実施。
-- `app/tests/calculation-test.html` の秒針時計テスト更新は未実施。
-- Service Worker v4への更新と、v3キャッシュ導入済み状態からv4へ更新できることの確認は未実施。
-- 秒針時計化後の 320px / 360px、ライト / ダーク、オフライン表示・計算確認は未実施。
+- 現時点で把握している未完了タスクはない。
+- 次の改善テーマは未設定。
 
 ## 確認済み
 
-- `app/tests/calculation-test.html`: 秒針ガイド簡素化後のブラウザ実行で `36 / 36 件成功`。
-- `node --check app/src/app.js`: 秒針ガイド簡素化後に成功。
-- `node --check app/src/calc.js`: 秒針ガイド簡素化後に成功。
-- `node --check app/src/service-worker.js`: 秒針ガイド簡素化後に成功。
-- `git diff --check`: 秒針ガイド簡素化後に成功。
-- 320x640 / 360x640 のダーク表示で `N > 2` / `N = 2` / `N = 1` を確認。
-- ライト/ダークの主要コントラストをCSS値から確認。
-- Service Worker v3の静的確認: `CACHE_NAME` は `tenteki-timer-v3`、削除対象は `cacheName !== CACHE_NAME && cacheName.startsWith('tenteki-timer-')`。
-- v2キャッシュ導入済み状態からv3へ更新できることを確認。
+- `app/tests/calculation-test.html`: 秒針時計化後のブラウザ実行で `25 / 25 件成功`。
+- `node --check app/src/app.js`: 秒針時計化後に成功。
+- `node --check app/src/calc.js`: 秒針時計化後に成功。
+- `node --check app/src/service-worker.js`: 秒針時計化後に成功。
+- `git diff --check`: 秒針時計化後に成功。
+- 320px / 360px 幅のフレーム検証で横スクロールなし、時計SVG幅200px、60本目盛り、12個の数字を確認。
+- ダークテーマの主要時計色はCSS値から、本文14.82:1、補助文9.01:1、秒針13.01:1、1秒目盛り11.05:1、盤面外周3.33:1を確認。
+- 初期表示で時計盤が表示され、時計の毎秒更新が live region のテキストを更新しないことを確認。
+- 入力変更・入力エラー時に前回結果表示が結果側に出ること、次の計算成功時に消えることを確認。
+- v3キャッシュ導入済み状態からv4へ更新でき、更新後に `tenteki-timer-v3` が削除され `tenteki-timer-v4` だけになることを確認。
+- v4更新後、ローカルHTTPサーバー停止状態でも時計盤付き表示と計算ができることを確認。
+- 秒針ガイド簡素化時に、320x640 / 360x640 のダーク表示で `N > 2` / `N = 2` / `N = 1` を確認済み。
+- 秒針ガイド簡素化時に、ライト/ダークの主要コントラストをCSS値から確認済み。
+- Service Worker v4の静的確認: `CACHE_NAME` は `tenteki-timer-v4`、削除対象は `cacheName !== CACHE_NAME && cacheName.startsWith('tenteki-timer-')`。
+- 秒針ガイド簡素化時に、v2キャッシュ導入済み状態からv3へ更新できることを確認済み。
 - GitHub Pages `https://rm007080.github.io/12_tenteki-timer/app/src/` で主端末スモーク確認済み。
 - iPhone / Android 両方でホーム画面追加、ホーム画面起動、初回オンライン読み込み後の機内モード切替、ホーム画面アイコンからの再起動、オフライン計算を確認済み。
 - `doc/architecture/04_byoshin-only-plan.md` は `codex-plan-review` 済みで P0/P1/P2 0件。
@@ -126,6 +126,8 @@ http://127.0.0.1:4180/app/src/
 ```
 
 `http://127.0.0.1:4180/` だけを開くと、リポジトリルートの `Directory listing for /` が表示される。これはサーバー起動失敗ではなく、URLのパスがアプリ本体まで届いていない状態。
+
+`localhost:4180` は環境によって `::1` 側へ解決され、`--bind 127.0.0.1` のサーバーに届かず `ERR_CONNECTION_REFUSED` になる場合がある。確認URLは `http://127.0.0.1:4180/app/src/` を優先する。
 
 ### ロジックテスト
 
@@ -151,6 +153,15 @@ Get-NetTCPConnection -LocalPort 4180 -State Listen -ErrorAction SilentlyContinue
 ```
 
 何も表示されなければ閉じている。自分で起動したサーバーを止める場合は、そのPowerShellで `Ctrl + C` を押す。
+
+起動したPowerShellが分からない場合は、4180番ポートを使っているプロセスIDだけを止める。
+
+```powershell
+$serverPid = (Get-NetTCPConnection -LocalPort 4180 -State Listen -ErrorAction SilentlyContinue).OwningProcess
+if ($serverPid) { Stop-Process -Id $serverPid }
+```
+
+停止後はもう一度 `Get-NetTCPConnection -LocalPort 4180 -State Listen -ErrorAction SilentlyContinue` を実行し、何も表示されないことを確認する。
 
 ## 実装時の重要ルール
 

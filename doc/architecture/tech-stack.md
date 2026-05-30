@@ -24,7 +24,7 @@ GitHub Pagesの公開元はリポジトリルートとし、アプリ本体は `
 |---|---|---|
 | マークアップ | HTML | 画面構造の作成 |
 | スタイル | CSS | スマホ向けUI、ライト/ダークモード対応 |
-| 図形表示 | SVG | 秒針ガイドのアナログ盤面表示 |
+| 図形表示 | SVG | 現在秒時計のアナログ盤面表示 |
 | ロジック | JavaScript | 入力チェック、丸め、時間計算、滴下計算、表示更新 |
 | PWA設定 | Web App Manifest | ホーム画面追加、アプリ名、アイコン設定 |
 | オフライン対応 | Service Worker / Cache API | アプリ本体のキャッシュ、オフライン利用 |
@@ -177,9 +177,9 @@ JavaScriptは、アプリの計算・検証・表示更新を担当する。
 | Math.round | 10mL単位、10分単位、整数表示への四捨五入 |
 | addEventListener | ボタン押下イベント処理 |
 | navigator.serviceWorker | Service Worker登録 |
-| setTimeout | 秒針ガイドを次の秒境界へ合わせて更新 |
+| setTimeout | 現在秒時計を次の秒境界へ合わせて更新 |
 | matchMedia / prefers-reduced-motion | 自動スクロール時の動きの抑制確認 |
-| SVG DOM属性更新 | 秒針、目印、範囲の反映 |
+| SVG DOM属性更新 | 秒針の反映 |
 
 ---
 
@@ -316,7 +316,7 @@ const ASSETS = [
 ### 8.3 キャッシュ名
 
 ```javascript
-const CACHE_NAME = 'tenteki-timer-v1';
+const CACHE_NAME = 'tenteki-timer-v4';
 ```
 
 アプリ更新時は、キャッシュ名を `tenteki-timer-v2` のように変更する。

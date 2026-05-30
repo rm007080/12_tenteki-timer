@@ -28,7 +28,7 @@
 - 2026-05-30: GitHub Pages URLで主端末スモーク確認を完了。
 - 2026-05-30: iPhone / Android 両方でホーム画面追加、ホーム画面起動、オフライン再起動、オフライン計算を確認。
 
-この下のフェーズ別チェックリストは、実装前に作った詳細計画として残す。すべて完了済みであり、進捗の正本は本節、`doc/architecture/implementation-plan.md`、`todo/now.md`、`doc/operations/handover.md` を参照する。
+この下のフェーズ別チェックリストは、実装前に作った詳細計画として残す。すべて完了済みであり、進捗の正本は本節、`doc/architecture/01_implementation-plan.md`、`todo/now.md`、`doc/operations/handover.md` を参照する。
 
 ## フェーズ1: 計算結果の返却値を拡張する
 
@@ -292,7 +292,7 @@
 - [x] `doc/architecture/tech-stack.md` に、SVGを既存Web標準機能として使うことを追記する。
 - [x] `doc/architecture/tech-stack.md` に、`setTimeout` を既存Web標準機能として使うことを追記する。
 - [x] `doc/architecture/tech-stack.md` に、`prefers-reduced-motion` を既存Web標準機能として使うことを追記する。
-- [x] `doc/architecture/implementation-plan.md` に、秒針ガイドの実装、テスト、手動確認、PWA更新確認を追加する。
+- [x] `doc/architecture/01_implementation-plan.md` に、秒針ガイドの実装、テスト、手動確認、PWA更新確認を追加する。
 - [x] `todo/` に、秒針ガイドの実装、テスト、手動確認、PWA更新確認を追加する。
 
 ## 前提と対象外

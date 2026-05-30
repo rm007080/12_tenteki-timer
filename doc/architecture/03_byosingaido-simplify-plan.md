@@ -43,10 +43,10 @@
 
 ## フェーズ4: ドキュメントと進捗管理を更新する
 
-- [x] `doc/architecture/byosingaido-plan.md` の「盤面上ラベル」前提を今回の簡素化方針に合わせる。
-- [x] `doc/architecture/byosingaido-plan.md` の「基準目盛り」前提を今回の簡素化方針に合わせる。
-- [x] `doc/architecture/byosingaido-plan.md` の `v2` キャッシュ前提を `v3` 更新方針に合わせる。
-- [x] `doc/architecture/implementation-plan.md` の残確認を、`v1 -> v2` ではなく「少なくともv2導入済み状態からv3へ更新できること」に置き換える。
+- [x] `doc/architecture/02_byosingaido-plan.md` の「盤面上ラベル」前提を今回の簡素化方針に合わせる。
+- [x] `doc/architecture/02_byosingaido-plan.md` の「基準目盛り」前提を今回の簡素化方針に合わせる。
+- [x] `doc/architecture/02_byosingaido-plan.md` の `v2` キャッシュ前提を `v3` 更新方針に合わせる。
+- [x] `doc/architecture/01_implementation-plan.md` の残確認を、`v1 -> v2` ではなく「少なくともv2導入済み状態からv3へ更新できること」に置き換える。
 - [x] `todo/now.md` の残確認を、`v1 -> v2` ではなく「少なくともv2導入済み状態からv3へ更新できること」に置き換える。
 - [x] MVP完了条件は、GitHub Pages URLで iPhone / Android 両方のホーム画面追加とオフライン利用を確認できた場合だけ完了にする。
 - [x] iPhone / Android 両方の確認が完了したため、MVP完了条件を完了済みにする。

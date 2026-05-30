@@ -69,32 +69,26 @@
       <button class="calculate-button" type="submit">計算する</button>
     </form>
 
-    <section class="result-panel" aria-labelledby="result-title" aria-live="polite">
+    <section class="result-panel" id="result-panel" aria-labelledby="result-title">
       <h2 id="result-title">計算結果</h2>
-      <p class="main-result" id="main-result">結果はここに表示されます</p>
-      <p class="drops-result" id="drops-result"></p>
-      <p class="ml-result" id="ml-result"></p>
-      <p class="condition-text" id="condition-text"></p>
-      <div class="second-guide" id="second-guide" hidden>
-        <p class="guide-status" id="guide-status"></p>
-        <p class="guide-note">目安ガイドです。指示・施設ルールに従って確認してください。</p>
-        <p class="sr-only" id="guide-a11y"></p>
-        <div class="guide-dial" id="guide-dial" hidden>
-          <div class="guide-legend" aria-hidden="true">
-            <span><span class="legend-line legend-line-solid"></span>実線: 次の目印</span>
-            <span><span class="legend-line legend-line-dashed"></span>破線: 2つ先の目印</span>
-          </div>
-          <svg class="guide-svg" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
-            <circle class="guide-face" cx="60" cy="60" r="54"></circle>
-            <path class="guide-range" id="guide-range"></path>
-            <line class="guide-marker guide-next-marker" id="guide-next-marker"></line>
-            <line class="guide-marker guide-following-marker" id="guide-following-marker"></line>
-            <line class="guide-hand" id="guide-hand"></line>
-            <circle class="guide-center" cx="60" cy="60" r="3"></circle>
-          </svg>
-          <p class="guide-help">色付きの範囲は、現在秒針から次の目印までの目安です。</p>
-        </div>
-        <p class="guide-unavailable" id="guide-unavailable" hidden></p>
+      <div class="result-output" aria-live="polite" aria-atomic="true">
+        <p class="main-result" id="main-result">結果はここに表示されます</p>
+        <p class="drops-result" id="drops-result"></p>
+        <p class="ml-result" id="ml-result"></p>
+        <p class="condition-text" id="condition-text"></p>
+      </div>
+      <p class="stale-result" id="stale-result" aria-live="polite" hidden>
+        前回の計算結果です。新しい条件は計算すると反映されます。
+      </p>
+      <div class="second-clock" id="second-clock">
+        <p class="clock-label">現在秒</p>
+        <svg class="clock-svg" viewBox="0 0 160 160" aria-hidden="true" focusable="false">
+          <circle class="clock-face" cx="80" cy="80" r="74"></circle>
+          <g class="clock-numbers" id="clock-numbers"></g>
+          <g class="clock-ticks" id="clock-ticks"></g>
+          <line class="clock-hand" id="clock-hand"></line>
+          <circle class="clock-center" cx="80" cy="80" r="3.5"></circle>
+        </svg>
       </div>
     </section>
   </main>

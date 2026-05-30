@@ -13,7 +13,6 @@
   --focus: #d97706;
   --guide-line: #0b5f59;
   --guide-muted-line: #475569;
-  --guide-range: rgba(37, 99, 235, 0.24);
   --shadow: 0 18px 40px rgba(21, 31, 28, 0.08);
 }
 
@@ -192,6 +191,11 @@ input[aria-invalid="true"] {
   text-align: center;
 }
 
+.result-output {
+  display: grid;
+  gap: 8px;
+}
+
 .result-panel h2 {
   font-size: 0.95rem;
   margin: 0;
@@ -228,109 +232,81 @@ input[aria-invalid="true"] {
   min-height: 1.4rem;
 }
 
-.second-guide {
-  border-top: 1px solid var(--line);
-  display: grid;
-  gap: 10px;
-  margin-top: 8px;
-  padding-top: 12px;
-  text-align: left;
+.stale-result {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.5;
+  margin: 0;
 }
 
-.guide-status {
+.second-clock {
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  margin-top: 10px;
+  padding-top: 12px;
+  text-align: center;
+}
+
+.clock-label {
   color: var(--text);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-weight: 800;
   line-height: 1.5;
   margin: 0;
 }
 
-.guide-note,
-.guide-help,
-.guide-unavailable {
+.clock-note {
   color: var(--muted);
   font-size: 0.82rem;
   line-height: 1.5;
   margin: 0;
 }
 
-.guide-dial {
-  display: grid;
-  gap: 8px;
-  justify-items: center;
-}
-
-.guide-svg {
+.clock-svg {
   aspect-ratio: 1 / 1;
   block-size: auto;
   display: block;
-  inline-size: min(100%, 220px);
+  inline-size: min(100%, 240px);
   margin: 0 auto;
   overflow: visible;
 }
 
-.guide-face {
+.clock-face {
   fill: var(--surface);
+  stroke: var(--line);
+  stroke-width: 2.5;
+}
+
+.clock-tick {
+  stroke: var(--guide-muted-line);
+  stroke-linecap: round;
+  stroke-width: 1.2;
+}
+
+.clock-tick-major {
   stroke: var(--guide-line);
   stroke-width: 2;
 }
 
-.guide-range {
-  fill: none;
-  stroke: var(--guide-range);
-  stroke-linecap: round;
-  stroke-width: 8;
+.clock-number {
+  dominant-baseline: central;
+  fill: var(--text);
+  font-size: 8.5px;
+  font-weight: 800;
+  text-anchor: middle;
 }
 
-.guide-hand {
+.clock-hand {
   stroke: var(--guide-line);
   stroke-linecap: round;
   stroke-width: 2.5;
 }
 
-.guide-marker {
-  stroke-linecap: round;
-  stroke-width: 3;
-}
-
-.guide-next-marker {
-  stroke: var(--guide-line);
-}
-
-.guide-following-marker {
-  stroke: var(--guide-muted-line);
-  stroke-dasharray: 4 4;
-}
-
-.guide-center {
+.clock-center {
   fill: var(--guide-line);
-}
-
-.guide-legend {
-  align-items: center;
-  color: var(--muted);
-  display: flex;
-  flex-wrap: wrap;
-  font-size: 0.78rem;
-  gap: 8px 12px;
-  justify-content: center;
-  line-height: 1.4;
-}
-
-.guide-legend span {
-  align-items: center;
-  display: inline-flex;
-  gap: 4px;
-}
-
-.legend-line {
-  border-top: 2px solid var(--guide-line);
-  inline-size: 18px;
-}
-
-.legend-line-dashed {
-  border-color: var(--guide-muted-line);
-  border-top-style: dashed;
 }
 
 .sr-only {
@@ -368,8 +344,8 @@ input[aria-invalid="true"] {
     font-size: 1.75rem;
   }
 
-  .guide-svg {
-    inline-size: min(100%, 180px);
+  .clock-svg {
+    inline-size: min(100%, 200px);
   }
 }
 
@@ -381,7 +357,7 @@ input[aria-invalid="true"] {
     --surface-strong: #172b28;
     --text: #eef5f1;
     --muted: #b6c3bd;
-    --line: #3d4944;
+    --line: #64746d;
     --accent: #2dd4bf;
     --accent-strong: #99f6e4;
     --accent-text: #09201d;
@@ -389,7 +365,6 @@ input[aria-invalid="true"] {
     --focus: #fbbf24;
     --guide-line: #99f6e4;
     --guide-muted-line: #cbd5e1;
-    --guide-range: rgba(96, 165, 250, 0.32);
     --shadow: none;
   }
 }

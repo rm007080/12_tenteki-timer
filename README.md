@@ -55,4 +55,5 @@
 - 計算ロジック、入力検証、丸め処理は `app/tests/calculation-test.html` と手動確認で確認済み。
 - `manifest.json` と `service-worker.js` によるオフライン利用を確認済み。
 - GitHub Pages URLと iPhone / Android 両方のホーム画面追加、ホーム画面起動、オフライン再起動、オフライン計算を確認済み。
-- 秒針ガイドを常時表示の秒針時計へ置き換える改善計画は [doc/architecture/04_byoshin-only-plan.md](doc/architecture/04_byoshin-only-plan.md) に作成済み。`codex-plan-review` 済みで、P0/P1は0件。
+- 秒針ガイドを常時表示の現在秒時計へ置き換える改善は実装済み。詳細は [doc/architecture/04_byoshin-only-plan.md](doc/architecture/04_byoshin-only-plan.md) と [doc/architecture/01_implementation-plan.md](doc/architecture/01_implementation-plan.md) のフェーズ9を参照する。
+- Service Workerの現行キャッシュ名は `tenteki-timer-v4`。

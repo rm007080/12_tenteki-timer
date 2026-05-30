@@ -67,7 +67,8 @@
 
 ## 現時点の検証
 
-- 実装前のため確定したテストコマンドはない。
 - ロジック確認は `app/tests/calculation-test.html` をブラウザで開く方式にする。
+- 構文確認は `node --check app/src/app.js`、`node --check app/src/calc.js`、`node --check app/src/service-worker.js` を使う。
+- 差分確認は `git diff --check` を使う。
 - Service Worker確認は `file://` ではなく、`app/src/` をローカルHTTPサーバーで配信して行う。
-- 手動確認項目は `doc/architecture/01_implementation-plan.md` のフェーズ6に従う。
+- 手動確認項目は `doc/architecture/01_implementation-plan.md` のフェーズ6、フェーズ9に従う。

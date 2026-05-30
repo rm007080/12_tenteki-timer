@@ -4,17 +4,22 @@
 
 MVP v1.0 は完了済み。
 
-次のテーマは、`doc/architecture/04_byoshin-only-plan.md` に沿って、既存の計算連動秒針ガイドを「常時表示の現在秒時計」へ置き換えること。
+`doc/architecture/04_byoshin-only-plan.md` に沿った、既存の計算連動秒針ガイドから「常時表示の現在秒時計」への置き換えは完了済み。
 
-計画は `codex-plan-review` 済みで、最終判断は P0/P1 0件。実装は未着手。
+現時点の次テーマは未設定。
 
 ## 作業中
 
-- [ ] `doc/architecture/04_byoshin-only-plan.md` に沿って、秒針時計化を実装する
-- [ ] 実装に合わせて `AGENTS.md`、`README.md`、正本文書、`todo/`、引継ぎ文書の旧パスと秒針仕様を更新する
+- [ ] 次の改善テーマを決める
 
 ## 完了
 
+- [x] `doc/architecture/04_byoshin-only-plan.md` に沿って、秒針時計化を実装する
+- [x] 実装に合わせて `AGENTS.md`、`README.md`、正本文書、`todo/`、引継ぎ文書の旧パスと秒針仕様を更新する
+- [x] `app/tests/calculation-test.html` に `getSecondClockState()` の固定時刻テストを追加し、25 / 25 件成功を確認する
+- [x] Service Workerのキャッシュ名を `tenteki-timer-v4` に更新する
+- [x] v3キャッシュ導入済み状態からv4へ更新できることを確認する
+- [x] v4更新後、オフラインで時計盤付き表示と計算ができることを確認する
 - [x] `doc/architecture/03_byosingaido-simplify-plan.md` フェーズ1〜3に沿って、SVG盤面内表示、DOM更新、CSS、Service Workerを更新する
 - [x] `doc/architecture/03_byosingaido-simplify-plan.md` フェーズ4に沿って、関連ドキュメントと `todo/` を更新する
 - [x] `app/tests/calculation-test.html` から `showDialLabels` 前提の確認を削除し、既存角度確認を維持する

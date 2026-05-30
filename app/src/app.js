@@ -2,17 +2,16 @@
   'use strict';
 
   var DEFAULT_DROP_FACTOR = 20;
-  var GUIDE_STATUS_CURRENT = '表示中の結果に基づくガイドです。';
-  var GUIDE_STATUS_STALE = '前回の計算結果に基づくガイドです。新しい条件は計算すると反映されます。';
-  var GUIDE_A11Y_CURRENT = '秒針ガイドを表示しています。実線が次の目印、破線が2つ先の目印です。';
-  var GUIDE_A11Y_UNAVAILABLE = 'この計算結果は秒針ガイドの対象外です。';
-  var GUIDE_A11Y_ERROR = '入力エラーのため、表示中のガイドは前回の計算結果です。';
-  var SVG_CENTER = 60;
+  var STALE_RESULT_TEXT = '前回の計算結果です。新しい条件は計算すると反映されます。';
+  var CLOCK_CENTER = 80;
+  var CLOCK_TICK_OUTER_RADIUS = 54;
+  var CLOCK_TICK_INNER_RADIUS = 50;
+  var CLOCK_FIVE_SECOND_TICK_INNER_RADIUS = 45;
+  var CLOCK_NUMBER_RADIUS = 63;
+  var CLOCK_HAND_RADIUS = 43;
   var selectedDropFactor = DEFAULT_DROP_FACTOR;
   var hasRenderedResult = false;
-  var guideTimeoutId = null;
-  var guideRunId = 0;
-  var activeGuide = null;
+  var clockTimeoutId = null;
   var isResettingAfterSuccess = false;
 
   var form = document.getElementById('calculation-form');
@@ -22,25 +21,15 @@
   var endTimeError = document.getElementById('end-time-error');
   var dropFactorError = document.getElementById('drop-factor-error');
   var factorButtons = Array.prototype.slice.call(document.querySelectorAll('.factor-button'));
+  var resultPanel = document.getElementById('result-panel');
   var mainResult = document.getElementById('main-result');
   var dropsResult = document.getElementById('drops-result');
   var mlResult = document.getElementById('ml-result');
   var conditionText = document.getElementById('condition-text');
-  var secondGuide = document.getElementById('second-guide');
-  var guideStatus = document.getElementById('guide-status');
-  var guideA11y = document.getElementById('guide-a11y');
-  var guideDial = document.getElementById('guide-dial');
-  var guideUnavailable = document.getElementById('guide-unavailable');
-  var guideRange = document.getElementById('guide-range');
-  var guideHand = document.getElementById('guide-hand');
-  var guideNextMarker = document.getElementById('guide-next-marker');
-  var guideFollowingMarker = document.getElementById('guide-following-marker');
-
-  function setTextIfChanged(element, text) {
-    if (element && element.textContent !== text) {
-      element.textContent = text;
-    }
-  }
+  var staleResult = document.getElementById('stale-result');
+  var clockTicks = document.getElementById('clock-ticks');
+  var clockNumbers = document.getElementById('clock-numbers');
+  var clockHand = document.getElementById('clock-hand');
 
   function setSelectedDropFactor(dropFactor) {
     selectedDropFactor = Number(dropFactor);
@@ -54,28 +43,13 @@
     dropFactorError.textContent = '';
   }
 
-  function setGuideStatus(isStale, reason) {
-    var statusText = isStale ? GUIDE_STATUS_STALE : GUIDE_STATUS_CURRENT;
-    var a11yText = GUIDE_A11Y_CURRENT;
-
-    if (reason === 'error') {
-      a11yText = GUIDE_A11Y_ERROR;
-    } else if (!guideDial || guideDial.hidden) {
-      a11yText = GUIDE_A11Y_UNAVAILABLE;
-    } else if (isStale) {
-      a11yText = GUIDE_STATUS_STALE;
-    }
-
-    setTextIfChanged(guideStatus, statusText);
-    setTextIfChanged(guideA11y, a11yText);
-  }
-
-  function markDisplayedResultStale(reason) {
+  function markDisplayedResultStale() {
     if (!hasRenderedResult || isResettingAfterSuccess) {
       return;
     }
 
-    setGuideStatus(true, reason);
+    staleResult.textContent = STALE_RESULT_TEXT;
+    staleResult.hidden = false;
   }
 
   function clearErrors() {
@@ -125,6 +99,7 @@
     dropsResult.textContent = result.dropsPerMinuteText;
     mlResult.textContent = result.mlPerHourText;
     conditionText.textContent = result.conditionText;
+    staleResult.hidden = true;
     hasRenderedResult = true;
   }
 
@@ -139,8 +114,8 @@
   function polarPoint(angleDeg, radius) {
     var radians = (angleDeg - 90) * Math.PI / 180;
     return {
-      x: SVG_CENTER + Math.cos(radians) * radius,
-      y: SVG_CENTER + Math.sin(radians) * radius
+      x: CLOCK_CENTER + Math.cos(radians) * radius,
+      y: CLOCK_CENTER + Math.sin(radians) * radius
     };
   }
 
@@ -154,40 +129,54 @@
     element.setAttribute('y2', end.y.toFixed(2));
   }
 
-  function describeArc(startAngleDeg, sweepAngleDeg, radius) {
-    if (sweepAngleDeg <= 0) {
-      return '';
+  function createSvgElement(tagName) {
+    return document.createElementNS('http://www.w3.org/2000/svg', tagName);
+  }
+
+  function buildClockFace() {
+    if (!clockTicks || !clockNumbers) {
+      return;
     }
 
-    var start = polarPoint(startAngleDeg, radius);
-    var end = polarPoint(startAngleDeg + sweepAngleDeg, radius);
-    var largeArc = sweepAngleDeg > 180 ? 1 : 0;
+    for (var second = 0; second < 60; second += 1) {
+      var angleDeg = second * 6;
+      var isFiveSecondTick = second % 5 === 0;
+      var tick = createSvgElement('line');
+      tick.setAttribute('class', isFiveSecondTick ? 'clock-tick clock-tick-major' : 'clock-tick');
+      setLineByAngle(
+        tick,
+        angleDeg,
+        isFiveSecondTick ? CLOCK_FIVE_SECOND_TICK_INNER_RADIUS : CLOCK_TICK_INNER_RADIUS,
+        CLOCK_TICK_OUTER_RADIUS
+      );
+      clockTicks.appendChild(tick);
 
-    return [
-      'M', start.x.toFixed(2), start.y.toFixed(2),
-      'A', radius, radius, 0, largeArc, 1, end.x.toFixed(2), end.y.toFixed(2)
-    ].join(' ');
-  }
-
-  function renderGuideState(state) {
-    var usesLongMarkers = state.intervalSeconds > 2;
-    var markerInnerRadius = usesLongMarkers ? 34 : 43;
-    var markerOuterRadius = 54;
-
-    guideRange.setAttribute('d', describeArc(state.rangeStartAngleDeg, state.rangeSweepAngleDeg, 46));
-    setLineByAngle(guideHand, state.currentAngleDeg, 0, 42);
-    setLineByAngle(guideNextMarker, state.nextMarkerAngleDeg, markerInnerRadius, markerOuterRadius);
-    setLineByAngle(guideFollowingMarker, state.followingMarkerAngleDeg, markerInnerRadius, markerOuterRadius);
-  }
-
-  function stopGuideTimer() {
-    if (guideTimeoutId !== null) {
-      window.clearTimeout(guideTimeoutId);
-      guideTimeoutId = null;
+      if (isFiveSecondTick) {
+        var labelPoint = polarPoint(angleDeg, CLOCK_NUMBER_RADIUS);
+        var number = createSvgElement('text');
+        number.setAttribute('class', 'clock-number');
+        number.setAttribute('x', labelPoint.x.toFixed(2));
+        number.setAttribute('y', labelPoint.y.toFixed(2));
+        number.textContent = String(second);
+        clockNumbers.appendChild(number);
+      }
     }
   }
 
-  function scheduleNextGuideUpdate(runId) {
+  function updateClock() {
+    var state = window.TentekiCalc.getSecondClockState(Date.now());
+    setLineByAngle(clockHand, state.angleDeg, 0, CLOCK_HAND_RADIUS);
+    scheduleNextClockUpdate();
+  }
+
+  function stopClockTimer() {
+    if (clockTimeoutId !== null) {
+      window.clearTimeout(clockTimeoutId);
+      clockTimeoutId = null;
+    }
+  }
+
+  function scheduleNextClockUpdate() {
     var nowMs = Date.now();
     var delayMs = 1000 - (nowMs % 1000);
 
@@ -195,64 +184,8 @@
       delayMs += 1000;
     }
 
-    guideTimeoutId = window.setTimeout(function () {
-      if (runId !== guideRunId || !activeGuide) {
-        return;
-      }
-
-      updateGuide(runId);
-    }, delayMs);
-  }
-
-  function updateGuide(runId) {
-    if (runId !== guideRunId || !activeGuide) {
-      return;
-    }
-
-    var state = window.TentekiCalc.getSecondGuideState(
-      activeGuide.anchorMs,
-      activeGuide.intervalSeconds,
-      Date.now()
-    );
-
-    if (state) {
-      renderGuideState(state);
-    }
-
-    scheduleNextGuideUpdate(runId);
-  }
-
-  function showGuideUnavailable() {
-    guideDial.hidden = true;
-    guideUnavailable.hidden = false;
-    guideUnavailable.textContent = 'この計算結果は秒針ガイドの対象外です。滴下間隔は結果表示を確認してください。';
-  }
-
-  function showGuideDial() {
-    guideDial.hidden = false;
-    guideUnavailable.hidden = true;
-    guideUnavailable.textContent = '';
-  }
-
-  function startOrUpdateGuide(result, anchorMs) {
-    stopGuideTimer();
-    guideRunId += 1;
-    activeGuide = null;
-    secondGuide.hidden = false;
-
-    if (!result.isSecondGuideEligible) {
-      showGuideUnavailable();
-      setGuideStatus(false);
-      return;
-    }
-
-    showGuideDial();
-    setGuideStatus(false);
-    activeGuide = {
-      anchorMs: anchorMs,
-      intervalSeconds: result.secondsPerDropSeconds
-    };
-    updateGuide(guideRunId);
+    stopClockTimer();
+    clockTimeoutId = window.setTimeout(updateClock, delayMs);
   }
 
   function scrollToResult() {
@@ -260,7 +193,7 @@
       var reducedMotion = window.matchMedia &&
         window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      mainResult.scrollIntoView({
+      resultPanel.scrollIntoView({
         behavior: reducedMotion ? 'auto' : 'smooth',
         block: 'start'
       });
@@ -273,7 +206,7 @@
       setSelectedDropFactor(button.dataset.dropFactor);
 
       if (Number(button.dataset.dropFactor) !== previousDropFactor) {
-        markDisplayedResultStale('input');
+        markDisplayedResultStale();
       }
     });
   });
@@ -281,22 +214,17 @@
   volumeInput.addEventListener('input', function () {
     volumeError.textContent = '';
     volumeInput.setAttribute('aria-invalid', 'false');
-    markDisplayedResultStale('input');
+    markDisplayedResultStale();
   });
 
   endTimeInput.addEventListener('input', function () {
     endTimeError.textContent = '';
     endTimeInput.setAttribute('aria-invalid', 'false');
-    markDisplayedResultStale('input');
+    markDisplayedResultStale();
   });
 
-  volumeInput.addEventListener('change', function () {
-    markDisplayedResultStale('input');
-  });
-
-  endTimeInput.addEventListener('change', function () {
-    markDisplayedResultStale('input');
-  });
+  volumeInput.addEventListener('change', markDisplayedResultStale);
+  endTimeInput.addEventListener('change', markDisplayedResultStale);
 
   form.addEventListener('submit', function (event) {
     event.preventDefault();
@@ -311,18 +239,21 @@
 
     if (!calculation.ok) {
       showErrors(calculation.errors);
-      markDisplayedResultStale('error');
+      markDisplayedResultStale();
       focusFirstInvalid(calculation.errors);
       return;
     }
 
-    var anchorMs = Math.floor(clickedAt.getTime() / 1000) * 1000;
     clearErrors();
     renderResult(calculation.result);
-    startOrUpdateGuide(calculation.result, anchorMs);
     resetInputs();
     scrollToResult();
   });
 
+  window.addEventListener('pagehide', stopClockTimer);
+  window.addEventListener('pageshow', updateClock);
+
   setSelectedDropFactor(DEFAULT_DROP_FACTOR);
+  buildClockFace();
+  updateClock();
 })();
