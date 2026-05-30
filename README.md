@@ -47,9 +47,10 @@
 - 公開形態: GitHub Pages で公開する静的PWA
 - 保存方針: 個人情報、入力値、計算履歴は保存しない
 
-## 最初にやること
+## 現在の状態
 
-1. `app/src/` に静的PWAの実装ファイルを追加する
-2. 計算ロジック、入力検証、丸め処理を手動確認する
-3. `manifest.json` と `service-worker.js` を追加してオフライン利用を確認する
-4. GitHub Pages 公開手順を `doc/operations/` に整理する
+- MVP v1.0 は完了済み。
+- `app/src/` に静的PWAの実装ファイル一式がある。
+- 計算ロジック、入力検証、丸め処理は `app/tests/calculation-test.html` と手動確認で確認済み。
+- `manifest.json` と `service-worker.js` によるオフライン利用を確認済み。
+- GitHub Pages URLと iPhone / Android 両方のホーム画面追加、ホーム画面起動、オフライン再起動、オフライン計算を確認済み。
