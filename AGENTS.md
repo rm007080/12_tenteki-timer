@@ -13,7 +13,7 @@
 - `specs/requirements.md`
 - `doc/architecture/overview.md`
 - `doc/architecture/tech-stack.md`
-- `doc/architecture/implementation-plan.md`
+- `doc/architecture/01_implementation-plan.md`
 - `todo/now.md`
 
 ## 正本の扱い
@@ -35,6 +35,9 @@
 - 変更は最小限にし、現在の repo 構造に合わせる。
 - 実データや生成物は、明確なユーザー意図なしに編集しない。
 - 振る舞い、パス、コマンドを変えたら、正本文書と `todo/` の必要箇所も更新する。
+- 新しい実装計画を作る場合は `doc/architecture/00_plan-template.md` を使う。
+- 実装計画には必ず `PWA更新確認` を入れ、PWA更新が必要か不要かを理由付きで明記する。
+- `app/src/` のキャッシュ対象ファイルを変更する計画では、Service Workerのキャッシュ名更新、`ASSETS` 更新要否、既存バージョンから新バージョンへの更新確認、オフライン表示・計算確認を計画に含める。
 - 推測コマンドではなく repo 固有の実コマンドを優先する。
 - MVPではReact、ビルドツール、外部API、DB、ブラウザ保存APIを追加しない。
 - 医療判断を代替する表現をUIやドキュメントに入れない。
@@ -67,4 +70,4 @@
 - 実装前のため確定したテストコマンドはない。
 - ロジック確認は `app/tests/calculation-test.html` をブラウザで開く方式にする。
 - Service Worker確認は `file://` ではなく、`app/src/` をローカルHTTPサーバーで配信して行う。
-- 手動確認項目は `doc/architecture/implementation-plan.md` のフェーズ6に従う。
+- 手動確認項目は `doc/architecture/01_implementation-plan.md` のフェーズ6に従う。

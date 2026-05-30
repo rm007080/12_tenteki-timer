@@ -2,18 +2,21 @@
 
 ## 次の1テーマ
 
-MVP v1.0 は完了。現時点で進行中タスクはありません。
+MVP v1.0 は完了済み。
 
-次に着手する場合は、ユーザーが指定する改善・追加要件を新しいテーマとして扱う。
+次のテーマは、`doc/architecture/04_byoshin-only-plan.md` に沿って、既存の計算連動秒針ガイドを「常時表示の現在秒時計」へ置き換えること。
+
+計画は `codex-plan-review` 済みで、最終判断は P0/P1 0件。実装は未着手。
 
 ## 作業中
 
-- なし
+- [ ] `doc/architecture/04_byoshin-only-plan.md` に沿って、秒針時計化を実装する
+- [ ] 実装に合わせて `AGENTS.md`、`README.md`、正本文書、`todo/`、引継ぎ文書の旧パスと秒針仕様を更新する
 
 ## 完了
 
-- [x] `doc/architecture/byosingaido-simplify-plan.md` フェーズ1〜3に沿って、SVG盤面内表示、DOM更新、CSS、Service Workerを更新する
-- [x] `doc/architecture/byosingaido-simplify-plan.md` フェーズ4に沿って、関連ドキュメントと `todo/` を更新する
+- [x] `doc/architecture/03_byosingaido-simplify-plan.md` フェーズ1〜3に沿って、SVG盤面内表示、DOM更新、CSS、Service Workerを更新する
+- [x] `doc/architecture/03_byosingaido-simplify-plan.md` フェーズ4に沿って、関連ドキュメントと `todo/` を更新する
 - [x] `app/tests/calculation-test.html` から `showDialLabels` 前提の確認を削除し、既存角度確認を維持する
 - [x] ローカルHTTP配信でロジックテストを全件成功させる
 - [x] 320x640 / 360x640 のダーク表示で `N > 2` / `N = 2` / `N = 1` を確認し、ライト/ダークの主要コントラストをCSS値から確認する
@@ -21,8 +24,10 @@ MVP v1.0 は完了。現時点で進行中タスクはありません。
 - [x] GitHub Pages URLで主端末スモーク確認を行う
 - [x] iPhone / Android 両方でホーム画面追加、ホーム画面起動、オフライン再起動、オフライン計算を確認する
 - [x] MVP完了条件の最終確認を行う
-- [x] 秒針ガイド簡素化実装後、`doc/architecture/implementation-plan.md` の完了条件を実態に合わせて最終更新する
-- [x] MVP完了条件を閉じるため、iPhone / Android 両方の実機PWA確認結果を `todo/now.md` と `doc/architecture/implementation-plan.md` に反映する
+- [x] 秒針ガイド簡素化実装後、`doc/architecture/01_implementation-plan.md` の完了条件を実態に合わせて最終更新する
+- [x] MVP完了条件を閉じるため、iPhone / Android 両方の実機PWA確認結果を `todo/now.md` と `doc/architecture/01_implementation-plan.md` に反映する
+- [x] 秒針時計化計画を `doc/architecture/04_byoshin-only-plan.md` に作成した
+- [x] 秒針時計化計画に `codex-plan-review` を実施し、レビュー結果を反映して P0/P1/P2 0件を確認した
 
 ## 完了済みの主要成果
 
@@ -48,7 +53,7 @@ MVP v1.0 は完了。現時点で進行中タスクはありません。
 - [x] 秒針ガイドの計算ロジックとテストを実装した
 - [x] 秒針ガイドのUI、タイマー管理、PWA更新を実装した
 - [x] ローカルプレビューとポート確認のつまずきを `logs/2026-05-24_local-preview-port-troubleshooting.md` に記録した
-- [x] 秒針ガイド簡素化計画を `doc/architecture/byosingaido-simplify-plan.md` に作成した
+- [x] 秒針ガイド簡素化計画を `doc/architecture/03_byosingaido-simplify-plan.md` に作成した
 - [x] `codex-plan-review` を実施し、レビュー指摘を反映した
 - [x] 秒針ガイド簡素化計画をフェーズ別チェックリストへ再構成した
 - [x] 秒針ガイド簡素化を実装し、`app/tests/calculation-test.html` で 36 / 36 件成功を確認した

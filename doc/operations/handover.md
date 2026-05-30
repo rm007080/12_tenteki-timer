@@ -2,18 +2,19 @@
 
 ## 現在地
 
-- MVP v1.0 は完了している。
-- 標準ワークスペース化は完了している。
+- MVP v1.0 は完了済み。
+- 標準ワークスペース化は完了済み。
 - MVP本体は `app/src/` に実装済み。
 - 計算ロジック確認用の静的テストは `app/tests/calculation-test.html` にある。
 - Service Worker、manifest、仮アイコンを含む静的PWA構成は実装済み。
 - 秒針ガイド機能と秒針ガイド簡素化は実装済み。
-- Service Workerのキャッシュ名は `tenteki-timer-v3`。
+- 現行Service Workerのキャッシュ名は `tenteki-timer-v3`。
 - Service Workerの旧キャッシュ削除対象は、`tenteki-timer-` で始まるCacheだけに限定済み。
-- v2キャッシュ導入済み状態からv3へ更新できることを確認済み。
 - GitHub Pages URLで主端末スモーク確認済み。
 - iPhone / Android 両方でホーム画面追加、ホーム画面起動、オフライン再起動、オフライン計算を確認済み。
-- 現時点でMVP v1.0は完了済み。
+- 新しい改善テーマとして、秒針ガイドを常時表示の秒針時計へ置き換える計画を `doc/architecture/04_byoshin-only-plan.md` に作成済み。
+- `04_byoshin-only-plan.md` は `codex-plan-review` 済み。シニアエンジニア観点と UI/UX 観点のサブレビューを実施し、最終的に P0/P1/P2 0件を確認済み。
+- 秒針時計化の実装は未着手。
 
 ## 最初に読むもの
 
@@ -22,17 +23,19 @@
 3. `specs/requirements.md`
 4. `doc/architecture/overview.md`
 5. `doc/architecture/tech-stack.md`
-6. `doc/architecture/implementation-plan.md`
-7. `todo/now.md`
+6. `doc/architecture/01_implementation-plan.md`
+7. `doc/architecture/04_byoshin-only-plan.md`
+8. `todo/now.md`
 
 ## 正本
 
 - 要件: `specs/requirements.md`
 - アーキテクチャ: `doc/architecture/overview.md`
 - 技術スタック: `doc/architecture/tech-stack.md`
-- MVP実装チェックリスト: `doc/architecture/implementation-plan.md`
-- 秒針ガイド計画: `doc/architecture/byosingaido-plan.md`
-- 秒針ガイド簡素化チェックリスト: `doc/architecture/byosingaido-simplify-plan.md`
+- MVP実装チェックリスト: `doc/architecture/01_implementation-plan.md`
+- 秒針ガイド計画: `doc/architecture/02_byosingaido-plan.md`
+- 秒針ガイド簡素化チェックリスト: `doc/architecture/03_byosingaido-simplify-plan.md`
+- 秒針時計化計画: `doc/architecture/04_byoshin-only-plan.md`
 - 引継ぎ詳細: `doc/operations/handover.md`
 - 次担当者向け短縮プロンプト: `doc/operations/Next-Agent-Prompt.md`
 - ルート直下の `tenteki-timer-*.md` は使わない。現在は `archive/` に元文書がある。
@@ -60,25 +63,51 @@
 - `style.css` から `.guide-reference` と `.guide-label` を削除した。
 - Service Workerのキャッシュ名を `tenteki-timer-v3` に更新した。
 - Service Workerの旧キャッシュ削除対象を `tenteki-timer-` で始まるCacheだけに限定した。
-- `doc/architecture/byosingaido-plan.md`、`doc/architecture/byosingaido-simplify-plan.md`、`doc/architecture/implementation-plan.md`、`todo/now.md` をMVP完了状態へ更新した。
+- `doc/architecture/02_byosingaido-plan.md`、`doc/architecture/03_byosingaido-simplify-plan.md`、`doc/architecture/01_implementation-plan.md`、`todo/now.md` をMVP完了状態へ更新した。
+- 秒針時計化計画を `doc/architecture/04_byoshin-only-plan.md` に作成した。
+- 秒針時計化計画に `codex-plan-review` を実施し、レビュー指摘を反映して P0/P1/P2 0件を確認した。
+- 今後の機能追加計画でPWA更新確認が漏れないよう、`doc/architecture/00_plan-template.md` を追加し、`AGENTS.md` に計画作成ルールを追記した。
+- `doc/operations/handover.md` と `doc/operations/Next-Agent-Prompt.md` を秒針時計化の実装前状態へ更新した。
+
+## 次の1テーマ
+
+`doc/architecture/04_byoshin-only-plan.md` に沿って、既存の計算連動秒針ガイドを、計算結果と連動しない常時表示の「現在秒」時計へ置き換える。
+
+実装時の要点:
+
+- 起動直後から結果パネル下部に秒針時計を表示する。
+- 時計は計算結果とは完全に独立させ、滴下間隔を強調・表示しない。
+- 時計盤の近くに「現在秒」と「現在時刻の秒です。滴下タイミングを示すものではありません。」を表示する。
+- 既存の「次の目印」「2つ先の目印」「色付き範囲」「凡例」「対象外表示」は削除する。
+- 入力変更・エラー時の「前回の計算結果」表示は、秒針周辺ではなく結果側の小さな表示欄へ移す。
+- `calc.js` に `getSecondClockState(nowMs)` を必須で追加し、固定時刻で針角度を確認できるようにする。
+- `app.js` は `Date.now()` を `getSecondClockState(nowMs)` に渡し、SVG属性へ反映するだけにする。
+- Service Workerのキャッシュ名は `tenteki-timer-v4` に上げる。
+- `AGENTS.md`、`README.md`、`todo/now.md`、引継ぎ文書に残る旧パスを番号付き文書へ統一する。
+- 新しい計画を追加する場合は `doc/architecture/00_plan-template.md` を使い、`PWA更新確認` を必ず埋める。
+
+## 未完了・未検証
+
+- 秒針時計化のコード実装は未着手。
+- `specs/requirements.md`、`overview.md`、`tech-stack.md`、`01_implementation-plan.md` の秒針時計化反映は未実施。
+- `app/tests/calculation-test.html` の秒針時計テスト更新は未実施。
+- Service Worker v4への更新と、v3キャッシュ導入済み状態からv4へ更新できることの確認は未実施。
+- 秒針時計化後の 320px / 360px、ライト / ダーク、オフライン表示・計算確認は未実施。
 
 ## 確認済み
 
-- `app/tests/calculation-test.html`: ブラウザ実行で `36 / 36 件成功`。
-- `node --check app/src/app.js`: 成功。
-- `node --check app/src/calc.js`: 成功。
-- `node --check app/src/service-worker.js`: 成功。
-- `git diff --check`: 成功。
+- `app/tests/calculation-test.html`: 秒針ガイド簡素化後のブラウザ実行で `36 / 36 件成功`。
+- `node --check app/src/app.js`: 秒針ガイド簡素化後に成功。
+- `node --check app/src/calc.js`: 秒針ガイド簡素化後に成功。
+- `node --check app/src/service-worker.js`: 秒針ガイド簡素化後に成功。
+- `git diff --check`: 秒針ガイド簡素化後に成功。
 - 320x640 / 360x640 のダーク表示で `N > 2` / `N = 2` / `N = 1` を確認。
 - ライト/ダークの主要コントラストをCSS値から確認。
 - Service Worker v3の静的確認: `CACHE_NAME` は `tenteki-timer-v3`、削除対象は `cacheName !== CACHE_NAME && cacheName.startsWith('tenteki-timer-')`。
 - v2キャッシュ導入済み状態からv3へ更新できることを確認。
 - GitHub Pages `https://rm007080.github.io/12_tenteki-timer/app/src/` で主端末スモーク確認済み。
 - iPhone / Android 両方でホーム画面追加、ホーム画面起動、初回オンライン読み込み後の機内モード切替、ホーム画面アイコンからの再起動、オフライン計算を確認済み。
-
-## 残件
-
-なし。
+- `doc/architecture/04_byoshin-only-plan.md` は `codex-plan-review` 済みで P0/P1/P2 0件。
 
 ## 再開時に使うコマンド
 
@@ -104,7 +133,7 @@ http://127.0.0.1:4180/app/src/
 http://127.0.0.1:4180/app/tests/calculation-test.html
 ```
 
-直近の確認結果は `36 / 36 件成功`。
+秒針時計化実装後は、`getSecondClockState()` のテストを追加し、更新後の全件成功数を確認する。
 
 ### 構文確認
 
@@ -143,6 +172,9 @@ Get-NetTCPConnection -LocalPort 4180 -State Listen -ErrorAction SilentlyContinue
 - `app/tmp/` は一時作業用とし、成果物の正本にしない。
 - 実装中にビルドツールや外部依存を追加しない。
 
-## 次に作業する場合
+## Git作業時の注意
 
-現時点ではMVP v1.0が完了しているため、次回はユーザーが指定する改善・追加要件を新しい作業テーマとして扱う。
+- 現在、アーキテクチャ文書は番号付きファイルへ整理されている。
+- `git status` では旧ファイル削除と番号付きファイル追加が見える場合がある。
+- 旧パスへ戻さず、実在する番号付き文書を正として扱う。
+- ユーザーが明示しない限り、`archive/` や運用データは触らない。

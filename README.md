@@ -9,7 +9,8 @@
 | 何を作るか | [specs/requirements.md](specs/requirements.md) |
 | 全体構成 | [doc/architecture/overview.md](doc/architecture/overview.md) |
 | 技術選定 | [doc/architecture/tech-stack.md](doc/architecture/tech-stack.md) |
-| 実装計画 | [doc/architecture/implementation-plan.md](doc/architecture/implementation-plan.md) |
+| 実装計画テンプレート | [doc/architecture/00_plan-template.md](doc/architecture/00_plan-template.md) |
+| 実装計画 | [doc/architecture/01_implementation-plan.md](doc/architecture/01_implementation-plan.md) |
 | 引継ぎと運用メモ | [doc/operations/handover.md](doc/operations/handover.md) |
 | 現在進行 | [todo/now.md](todo/now.md) |
 
@@ -54,3 +55,4 @@
 - 計算ロジック、入力検証、丸め処理は `app/tests/calculation-test.html` と手動確認で確認済み。
 - `manifest.json` と `service-worker.js` によるオフライン利用を確認済み。
 - GitHub Pages URLと iPhone / Android 両方のホーム画面追加、ホーム画面起動、オフライン再起動、オフライン計算を確認済み。
+- 秒針ガイドを常時表示の秒針時計へ置き換える改善計画は [doc/architecture/04_byoshin-only-plan.md](doc/architecture/04_byoshin-only-plan.md) に作成済み。`codex-plan-review` 済みで、P0/P1は0件。
