@@ -3,6 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'self'">
   <title>点滴タイマー</title>
   <meta name="theme-color" content="#2563eb">
   <link rel="manifest" href="./manifest.json">
@@ -10,13 +12,6 @@
   <link rel="stylesheet" href="./style.css">
   <script src="./calc.js" defer></script>
   <script src="./app.js" defer></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function () {
-        navigator.serviceWorker.register('./service-worker.js');
-      });
-    }
-  </script>
 </head>
 <body>
   <main class="app" aria-labelledby="app-title">
@@ -82,6 +77,7 @@
       </p>
       <div class="second-clock" id="second-clock">
         <p class="clock-label">現在秒</p>
+        <p class="clock-note">現在時刻の秒です。滴下タイミングを示すものではありません。</p>
         <svg class="clock-svg" viewBox="0 0 160 160" aria-hidden="true" focusable="false">
           <circle class="clock-face" cx="80" cy="80" r="74"></circle>
           <g class="clock-numbers" id="clock-numbers"></g>

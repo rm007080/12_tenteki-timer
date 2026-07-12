@@ -6,14 +6,22 @@ MVP v1.0 は完了済み。
 
 `doc/architecture/04_byoshin-only-plan.md` に沿った、既存の計算連動秒針ガイドから「常時表示の現在秒時計」への置き換えは完了済み。
 
-現時点の次テーマは未設定。
+現在のテーマ: デバッグ・リファクタリング・セキュリティ強化(`chore-debug-security` ブランチ)。
 
 ## 作業中
 
-- [ ] 次の改善テーマを決める
+- [ ] ブラウザでのCSP・SW登録・v4→v5更新・オフライン確認を完了する
+- [ ] iPhone / Android 実機でのオフライン再起動確認を行う(GitHub Pages反映後)
 
 ## 完了
 
+- [x] 仕様必須の秒時計注記「現在時刻の秒です。滴下タイミングを示すものではありません。」を `index.html` に追加する
+- [x] タブ復帰時に秒針を即再同期する `visibilitychange` 処理を `app.js` に追加する
+- [x] `updateClock()` の null ガードと stale 文言の二重定義を解消する
+- [x] CSPメタタグを追加し、SW登録のインラインスクリプトを `app.js` へ外部化する
+- [x] Service Workerのキャッシュ名を `tenteki-timer-v5` に更新する
+- [x] セキュリティレビューを `doc/analysis/security-review.md` に文書化する
+- [x] 正本文書(`overview.md` / `tech-stack.md`)・`README.md`・引継ぎ文書をv5とCSP導入に合わせて更新する
 - [x] `doc/architecture/04_byoshin-only-plan.md` に沿って、秒針時計化を実装する
 - [x] 実装に合わせて `AGENTS.md`、`README.md`、正本文書、`todo/`、引継ぎ文書の旧パスと秒針仕様を更新する
 - [x] `app/tests/calculation-test.html` に `getSecondClockState()` の固定時刻テストを追加し、25 / 25 件成功を確認する

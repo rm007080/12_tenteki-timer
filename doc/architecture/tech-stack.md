@@ -28,6 +28,7 @@ GitHub Pagesの公開元はリポジトリルートとし、アプリ本体は `
 | ロジック | JavaScript | 入力チェック、丸め、時間計算、滴下計算、表示更新 |
 | PWA設定 | Web App Manifest | ホーム画面追加、アプリ名、アイコン設定 |
 | オフライン対応 | Service Worker / Cache API | アプリ本体のキャッシュ、オフライン利用 |
+| セキュリティ | CSP(メタタグ) | 読み込み先を同一オリジンに限定する防御多層化。インラインスクリプトは置かない |
 | 公開先 | GitHub Pages | 静的Webアプリの公開 |
 | 対象端末 | iPhone / Android | 個人スマホ利用 |
 | 対象ブラウザ | Safari / Chrome系ブラウザ | PWA利用、スマホ標準ブラウザ対応 |
@@ -316,7 +317,7 @@ const ASSETS = [
 ### 8.3 キャッシュ名
 
 ```javascript
-const CACHE_NAME = 'tenteki-timer-v4';
+const CACHE_NAME = 'tenteki-timer-v5';
 ```
 
 アプリ更新時は、キャッシュ名を `tenteki-timer-v2` のように変更する。

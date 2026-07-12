@@ -8,7 +8,8 @@
 - 計算ロジック確認用の静的テストは `app/tests/calculation-test.html` にある。
 - Service Worker、manifest、仮アイコンを含む静的PWA構成は実装済み。
 - 秒針ガイド機能と秒針ガイド簡素化は実装済み。
-- 現行Service Workerのキャッシュ名は `tenteki-timer-v4`。
+- 現行Service Workerのキャッシュ名は `tenteki-timer-v5`。
+- セキュリティレビューを実施済み(`doc/analysis/security-review.md`)。CSPメタタグ追加、SW登録の `app.js` 移設、仕様必須の秒時計注記追加、タブ復帰時の秒針再同期を実装済み。
 - Service Workerの旧キャッシュ削除対象は、`tenteki-timer-` で始まるCacheだけに限定済み。
 - GitHub Pages URLで主端末スモーク確認済み。
 - iPhone / Android 両方でホーム画面追加、ホーム画面起動、オフライン再起動、オフライン計算を確認済み。

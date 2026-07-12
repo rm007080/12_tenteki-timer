@@ -26,8 +26,9 @@ MVP v1.0、秒針ガイド追加、秒針ガイド簡素化、秒針時計化は
 - 「次の目印」「2つ先の目印」「色付き範囲」「凡例」「対象外表示」は削除済み。
 - 前回結果表示は結果側の小さな表示欄に移動済み。
 - `calc.js` には `getSecondClockState(nowMs)` があり、`getSecondGuideState()` とガイド専用戻り値は削除済み。
-- Service Workerは現在 `tenteki-timer-v4`。
+- Service Workerは現在 `tenteki-timer-v5`。
 - 旧Cache削除は `tenteki-timer-` で始まるCacheだけを対象にしている。
+- CSPメタタグ導入済み。SW登録は `app.js` に移設済みで、インラインスクリプトは存在しない。詳細は `doc/analysis/security-review.md`。
 
 ## 確認済み
 

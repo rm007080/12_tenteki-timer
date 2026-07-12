@@ -2,7 +2,6 @@
   'use strict';
 
   var DEFAULT_DROP_FACTOR = 20;
-  var STALE_RESULT_TEXT = '前回の計算結果です。新しい条件は計算すると反映されます。';
   var CLOCK_CENTER = 80;
   var CLOCK_TICK_OUTER_RADIUS = 54;
   var CLOCK_TICK_INNER_RADIUS = 50;
@@ -48,7 +47,6 @@
       return;
     }
 
-    staleResult.textContent = STALE_RESULT_TEXT;
     staleResult.hidden = false;
   }
 
@@ -164,6 +162,10 @@
   }
 
   function updateClock() {
+    if (!clockHand) {
+      return;
+    }
+
     var state = window.TentekiCalc.getSecondClockState(Date.now());
     setLineByAngle(clockHand, state.angleDeg, 0, CLOCK_HAND_RADIUS);
     scheduleNextClockUpdate();
@@ -253,7 +255,21 @@
   window.addEventListener('pagehide', stopClockTimer);
   window.addEventListener('pageshow', updateClock);
 
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      stopClockTimer();
+    } else {
+      updateClock();
+    }
+  });
+
   setSelectedDropFactor(DEFAULT_DROP_FACTOR);
   buildClockFace();
   updateClock();
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('./service-worker.js');
+    });
+  }
 })();

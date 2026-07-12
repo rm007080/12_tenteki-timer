@@ -56,4 +56,5 @@
 - `manifest.json` と `service-worker.js` によるオフライン利用を確認済み。
 - GitHub Pages URLと iPhone / Android 両方のホーム画面追加、ホーム画面起動、オフライン再起動、オフライン計算を確認済み。
 - 秒針ガイドを常時表示の現在秒時計へ置き換える改善は実装済み。詳細は [doc/architecture/04_byoshin-only-plan.md](doc/architecture/04_byoshin-only-plan.md) と [doc/architecture/01_implementation-plan.md](doc/architecture/01_implementation-plan.md) のフェーズ9を参照する。
-- Service Workerの現行キャッシュ名は `tenteki-timer-v4`。
+- Service Workerの現行キャッシュ名は `tenteki-timer-v5`。
+- セキュリティレビューを実施済み(CSPメタタグ追加、SW登録のインラインスクリプト外部化)。詳細は [doc/analysis/security-review.md](doc/analysis/security-review.md) を参照する。

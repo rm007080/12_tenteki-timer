@@ -93,6 +93,7 @@ PWAアイコン用に、`app/src/icons/` ディレクトリを追加する。
 - エラー表示領域の配置
 - CSSとJavaScriptの読み込み
 - manifest.jsonの読み込み
+- CSPメタタグによる同一オリジン限定(インラインスクリプトは置かない)
 
 ---
 
@@ -156,6 +157,8 @@ DOM操作とイベント処理を担当する。
 - 計算成功後の入力欄リセット
 - 現在秒時計の常時表示
 - 再帰的 `setTimeout` による秒境界更新
+- タブ非表示時のタイマー停止と再表示時の秒針再同期(`visibilitychange`)
+- Service Workerの登録
 - 入力変更や入力エラー時の「前回の計算結果」表示
 
 ---
@@ -509,7 +512,7 @@ MVPでは、単純なCache First方式を採用する。
 例：
 
 ```text
-CACHE_NAME = 'tenteki-timer-v4'
+CACHE_NAME = 'tenteki-timer-v5'
 ```
 
 ファイルを更新した場合は、キャッシュ名を変更して旧キャッシュを削除する。
@@ -563,6 +566,10 @@ GitHub Pages（公開元: リポジトリルート）
 ### 12.4 ログ
 
 利用ログや計算ログは収集しない。
+
+### 12.5 コンテンツセキュリティポリシー
+
+`index.html` のCSPメタタグで、スクリプト・スタイル・画像・manifest・Workerの読み込み先を同一オリジンに限定する(GitHub Pagesはレスポンスヘッダーを設定できないためメタタグ方式)。インラインスクリプトは置かず、Service Worker登録は `app.js` 側で行う。セキュリティレビューの詳細は `doc/analysis/security-review.md` を参照する。
 
 ---
 
